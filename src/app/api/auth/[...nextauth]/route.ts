@@ -1,11 +1,14 @@
-import NextAuth, { NextAuthOptions } from 'next-auth';
+import NextAuth, { NextAuthOptions, User, Session, JWT } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import type { User } from 'next-auth';
 
 interface CustomUser extends User {
   id: string;
   email: string;
   name: string;
+}
+
+interface CustomSession extends Session {
+  user: CustomUser;
 }
 
 export const authOptions: NextAuthOptions = {
@@ -17,7 +20,7 @@ export const authOptions: NextAuthOptions = {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" }
       },
-      async authorize(credentials): Promise<CustomUser | null> {
+      async authorize(credentials: { email: string; password: string; } | undefined): Promise<CustomUser | null> {
         if (!credentials?.email || !credentials?.password) {
           return null;
         }
@@ -44,7 +47,7 @@ export const authOptions: NextAuthOptions = {
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user }: { token: JWT; user?: CustomUser }): Promise<JWT> {
       if (user) {
         token.id = user.id;
         token.email = user.email;
@@ -52,13 +55,16 @@ export const authOptions: NextAuthOptions = {
       }
       return token;
     },
-    async session({ session, token }) {
+    async session({ session, token }: { session: CustomSession; token: JWT }): Promise<CustomSession> {
       if (session.user) {
         session.user.id = token.id as string;
+        session.user.email = token.email as string;
+        session.user.name = token.name as string;
       }
       return session;
     }
   },
+  secret: process.env.NEXTAUTH_SECRET,
   debug: process.env.NODE_ENV === 'development',
 };
 
