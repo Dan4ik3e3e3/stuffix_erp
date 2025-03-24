@@ -1,6 +1,12 @@
-import NextAuth from 'next-auth';
+import NextAuth, { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { NextAuthOptions } from 'next-auth';
+import type { User } from 'next-auth';
+
+interface CustomUser extends User {
+  id: string;
+  email: string;
+  name: string;
+}
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -11,9 +17,9 @@ export const authOptions: NextAuthOptions = {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" }
       },
-      async authorize(credentials) {
+      async authorize(credentials): Promise<CustomUser | null> {
         if (!credentials?.email || !credentials?.password) {
-          throw new Error('Email и пароль обязательны');
+          return null;
         }
 
         // Временные учетные данные администратора
@@ -25,7 +31,7 @@ export const authOptions: NextAuthOptions = {
           };
         }
 
-        throw new Error('Неверный email или пароль');
+        return null;
       }
     })
   ],
@@ -48,12 +54,12 @@ export const authOptions: NextAuthOptions = {
     },
     async session({ session, token }) {
       if (session.user) {
-        session.user.id = token.id;
+        session.user.id = token.id as string;
       }
       return session;
     }
   },
-  secret: process.env.NEXTAUTH_SECRET,
+  debug: process.env.NODE_ENV === 'development',
 };
 
 const handler = NextAuth(authOptions);

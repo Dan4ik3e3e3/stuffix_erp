@@ -26,9 +26,15 @@ export default function LoginPage() {
         callbackUrl,
       });
 
-      if (result?.error) {
-        setError(result.error);
-      } else if (result?.url) {
+      console.log('Sign in result:', result);
+
+      if (!result) {
+        throw new Error('Ошибка входа');
+      }
+
+      if (result.error) {
+        setError(result.error === 'CredentialsSignin' ? 'Неверный email или пароль' : result.error);
+      } else if (result.url) {
         router.push(result.url);
       }
     } catch (err) {
@@ -50,7 +56,7 @@ export default function LoginPage() {
             Stuffix ERP
           </p>
         </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit} method="POST">
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <input type="hidden" name="remember" value="true" />
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
