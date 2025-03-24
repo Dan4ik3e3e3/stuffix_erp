@@ -1,26 +1,23 @@
 #!/bin/bash
 
-# Остановить все контейнеры
-docker compose down
-
-# Удалить старые сертификаты
-rm -rf ./certbot/conf/*
-
-# Создать необходимые директории
+# Создаем необходимые директории
 mkdir -p certbot/conf
 mkdir -p certbot/www
 
-# Запустить nginx в режиме HTTP
-docker compose up -d nginx
+# Останавливаем существующие контейнеры
+docker-compose down
 
-# Подождать, пока nginx запустится
+# Запускаем только nginx для первоначальной проверки домена
+docker-compose up -d nginx
+
+# Ждем, пока nginx запустится
 sleep 5
 
-# Получить сертификат
-docker compose run --rm certbot certonly --webroot --webroot-path=/var/www/certbot/ \
-  --email dkuzmitskiyy@bk.ru --agree-tos --no-eff-email \
-  -d stuffix.com --force-renewal
+# Запускаем certbot для получения сертификатов
+docker-compose run --rm certbot
 
-# Перезапустить все сервисы
-docker compose down
-docker compose up -d 
+# Перезапускаем все сервисы
+docker-compose down
+docker-compose up -d
+
+echo "SSL initialization completed!" 

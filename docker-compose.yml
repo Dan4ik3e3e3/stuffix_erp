@@ -1,18 +1,19 @@
-version: '3.8'
+version: '3'
 
 services:
-  app:
+  nextjs:
     build:
       context: .
       dockerfile: Dockerfile
     restart: always
+    ports:
+      - "3000:3000"
     networks:
       - app-network
-    expose:
-      - "3000"
 
   nginx:
     image: nginx:alpine
+    restart: always
     ports:
       - "80:80"
       - "443:443"
@@ -21,20 +22,16 @@ services:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
     depends_on:
-      - app
-    restart: always
+      - nextjs
     networks:
       - app-network
-    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
 
   certbot:
     image: certbot/certbot
     volumes:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
-    networks:
-      - app-network
+    command: certonly --webroot -w /var/www/certbot --force-renewal --email admin@stuffix.online -d stuffix.online -d www.stuffix.online --agree-tos
 
 networks:
   app-network:
