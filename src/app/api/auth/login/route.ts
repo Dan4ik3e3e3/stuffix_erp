@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import bcrypt from 'bcryptjs';
 
 // Временные учетные данные администратора (в реальном приложении должны храниться в базе данных)
 const ADMIN_EMAIL = 'admin@stuffix.online';
@@ -18,7 +17,8 @@ export async function POST(request: Request) {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
-        maxAge: 60 * 60 * 24 * 7 // 7 дней
+        maxAge: 60 * 60 * 24 * 7, // 7 дней
+        path: '/'
       });
 
       return response;
@@ -29,6 +29,7 @@ export async function POST(request: Request) {
       { status: 401 }
     );
   } catch (error) {
+    console.error('Login error:', error);
     return NextResponse.json(
       { error: 'Ошибка сервера' },
       { status: 500 }

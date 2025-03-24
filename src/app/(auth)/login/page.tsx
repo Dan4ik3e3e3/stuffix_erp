@@ -9,7 +9,7 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
 
@@ -20,6 +20,7 @@ export default function LoginPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email, password }),
+        credentials: 'include', // Важно для работы с cookies
       });
 
       if (response.ok) {
@@ -29,6 +30,7 @@ export default function LoginPage() {
         setError(data.error || 'Неверный email или пароль');
       }
     } catch (err) {
+      console.error('Login error:', err);
       setError('Произошла ошибка при входе');
     }
   };
@@ -44,7 +46,7 @@ export default function LoginPage() {
             Stuffix ERP
           </p>
         </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit} method="post">
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
               <label htmlFor="email" className="sr-only">
