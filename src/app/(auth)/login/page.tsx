@@ -21,12 +21,13 @@ export default function LoginPage() {
         email,
         password,
         redirect: false,
+        callbackUrl: '/dashboard'
       });
 
       if (result?.error) {
         setError('Неверный email или пароль');
-      } else {
-        router.push('/dashboard');
+      } else if (result?.url) {
+        router.push(result.url);
       }
     } catch (err) {
       console.error('Login error:', err);
@@ -48,6 +49,7 @@ export default function LoginPage() {
           </p>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <input type="hidden" name="remember" value="true" />
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
               <label htmlFor="email" className="sr-only">
@@ -57,6 +59,7 @@ export default function LoginPage() {
                 id="email"
                 name="email"
                 type="email"
+                autoComplete="email"
                 required
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                 placeholder="Email"
@@ -73,6 +76,7 @@ export default function LoginPage() {
                 id="password"
                 name="password"
                 type="password"
+                autoComplete="current-password"
                 required
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                 placeholder="Пароль"
