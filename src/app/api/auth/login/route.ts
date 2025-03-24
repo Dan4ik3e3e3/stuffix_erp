@@ -5,12 +5,25 @@ import { cookies } from 'next/headers';
 const ADMIN_EMAIL = 'admin@stuffix.online';
 const ADMIN_PASSWORD = 'admin123'; // В реальном приложении должен быть хеширован
 
+// CORS заголовки
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  'Access-Control-Allow-Credentials': 'true',
+};
+
+// Обработка OPTIONS запроса для CORS
+export async function OPTIONS() {
+  return NextResponse.json({}, { headers: corsHeaders });
+}
+
 export async function POST(request: Request) {
   try {
     const { email, password } = await request.json();
 
     if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-      const response = NextResponse.json({ success: true });
+      const response = NextResponse.json({ success: true }, { headers: corsHeaders });
       
       // Устанавливаем cookie для аутентификации
       response.cookies.set('auth', 'true', {
@@ -26,13 +39,13 @@ export async function POST(request: Request) {
 
     return NextResponse.json(
       { error: 'Неверные учетные данные' },
-      { status: 401 }
+      { status: 401, headers: corsHeaders }
     );
   } catch (error) {
     console.error('Login error:', error);
     return NextResponse.json(
       { error: 'Ошибка сервера' },
-      { status: 500 }
+      { status: 500, headers: corsHeaders }
     );
   }
 } 

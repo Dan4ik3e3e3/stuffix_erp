@@ -7,31 +7,37 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
+    setIsLoading(true);
 
     try {
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
         },
         body: JSON.stringify({ email, password }),
-        credentials: 'include', // Важно для работы с cookies
+        credentials: 'include',
       });
+
+      const data = await response.json();
 
       if (response.ok) {
         router.push('/dashboard');
       } else {
-        const data = await response.json();
         setError(data.error || 'Неверный email или пароль');
       }
     } catch (err) {
       console.error('Login error:', err);
       setError('Произошла ошибка при входе');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -46,7 +52,7 @@ export default function LoginPage() {
             Stuffix ERP
           </p>
         </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit} method="post">
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
               <label htmlFor="email" className="sr-only">
@@ -61,6 +67,7 @@ export default function LoginPage() {
                 placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                disabled={isLoading}
               />
             </div>
             <div>
@@ -76,6 +83,7 @@ export default function LoginPage() {
                 placeholder="Пароль"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                disabled={isLoading}
               />
             </div>
           </div>
@@ -87,9 +95,10 @@ export default function LoginPage() {
           <div>
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+              disabled={isLoading}
             >
-              Войти
+              {isLoading ? 'Вход...' : 'Войти'}
             </button>
           </div>
         </form>
