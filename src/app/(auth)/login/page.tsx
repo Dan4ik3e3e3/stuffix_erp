@@ -38,8 +38,8 @@ function LoginForm() {
         return;
       }
 
-      const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
-      router.push(callbackUrl);
+      router.push('/dashboard');
+      router.refresh();
     } catch (error) {
       console.error('Login error:', error);
       setError('An error occurred during login');
@@ -84,7 +84,7 @@ function LoginForm() {
         disabled={isLoading}
         className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
       >
-        {isLoading ? 'Logging in...' : 'Login'}
+        {isLoading ? 'Вход...' : 'Войти'}
       </button>
     </form>
   );
@@ -96,10 +96,10 @@ export default function LoginPage() {
       <div className="max-w-md w-full space-y-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Sign in to your account
+            Вход в Stuffix ERP
           </h2>
         </div>
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<div>Загрузка...</div>}>
           <LoginForm />
         </Suspense>
       </div>
