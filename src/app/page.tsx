@@ -1,79 +1,146 @@
-import Image from "next/image";
+'use client';
+
+import { useState } from 'react';
+import Link from 'next/link';
+
+// Компоненты интерфейса
+const Sidebar = () => {
+  const menuItems = [
+    { name: 'Дашборд', icon: '📊', path: '/' },
+    { name: 'Сотрудники', icon: '👥', path: '/employees' },
+    { name: 'Проекты', icon: '📁', path: '/projects' },
+    { name: 'Задачи', icon: '✓', path: '/tasks' },
+    { name: 'Календарь', icon: '📅', path: '/calendar' },
+    { name: 'Отчеты', icon: '📈', path: '/reports' },
+    { name: 'Настройки', icon: '⚙️', path: '/settings' },
+  ];
+
+  return (
+    <div className="w-64 bg-gray-800 text-white h-screen fixed left-0 top-0">
+      <div className="p-4">
+        <h1 className="text-2xl font-bold mb-8">Stuffix ERP</h1>
+        <nav>
+          {menuItems.map((item) => (
+            <Link
+              key={item.path}
+              href={item.path}
+              className="flex items-center space-x-2 p-2 hover:bg-gray-700 rounded-lg mb-2"
+            >
+              <span>{item.icon}</span>
+              <span>{item.name}</span>
+            </Link>
+          ))}
+        </nav>
+      </div>
+    </div>
+  );
+};
+
+const Header = () => {
+  return (
+    <header className="bg-white shadow-md fixed top-0 left-64 right-0 h-16 flex items-center justify-between px-6">
+      <div className="flex items-center space-x-4">
+        <h2 className="text-xl font-semibold">Дашборд</h2>
+      </div>
+      <div className="flex items-center space-x-4">
+        <button className="p-2 hover:bg-gray-100 rounded-full">🔔</button>
+        <button className="p-2 hover:bg-gray-100 rounded-full">👤</button>
+      </div>
+    </header>
+  );
+};
+
+const DashboardCard = ({ title, value, icon, color }: { title: string; value: string; icon: string; color: string }) => {
+  return (
+    <div className={`bg-white rounded-lg shadow-md p-6 ${color}`}>
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="text-gray-500 text-sm">{title}</h3>
+          <p className="text-2xl font-semibold mt-1">{value}</p>
+        </div>
+        <div className="text-3xl">{icon}</div>
+      </div>
+    </div>
+  );
+};
 
 export default function Home() {
+  const [currentDate] = useState(new Date().toLocaleDateString('ru-RU'));
+
   return (
-    <main className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
-        <div className="text-center">
-          <h1 className="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
-            <span className="block">Welcome to</span>
-            <span className="block text-indigo-600">Stuffix ERP</span>
-        </h1>
-          <p className="mt-3 max-w-md mx-auto text-base text-gray-500 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
-            Эффективное управление персоналом и ресурсами предприятия
-          </p>
-          <div className="mt-10 flex items-center justify-center gap-x-6">
-            <a
-              href="/login"
-              className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            >
-              Войти в систему
-            </a>
-          </div>
+    <div className="min-h-screen bg-gray-100">
+      <Sidebar />
+      <Header />
+      
+      <main className="ml-64 pt-16 p-6">
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold mb-2">Добро пожаловать в Stuffix ERP</h2>
+          <p className="text-gray-600">Сегодня: {currentDate}</p>
         </div>
 
-        <div className="mt-16">
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            <div className="pt-6">
-              <div className="flow-root bg-white rounded-lg px-6 pb-8">
-                <div className="-mt-6">
-                  <div className="inline-flex items-center justify-center p-3 bg-indigo-500 rounded-md shadow-lg">
-                    <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                    </svg>
-                  </div>
-                  <h3 className="mt-8 text-lg font-medium text-gray-900 tracking-tight">Управление персоналом</h3>
-                  <p className="mt-5 text-base text-gray-500">
-                    Эффективное управление сотрудниками, отпусками и рабочим временем
-                  </p>
-                </div>
-              </div>
-            </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <DashboardCard
+            title="Активные проекты"
+            value="12"
+            icon="📁"
+            color="hover:shadow-lg"
+          />
+          <DashboardCard
+            title="Сотрудники"
+            value="48"
+            icon="👥"
+            color="hover:shadow-lg"
+          />
+          <DashboardCard
+            title="Задачи на сегодня"
+            value="24"
+            icon="✓"
+            color="hover:shadow-lg"
+          />
+          <DashboardCard
+            title="Завершенные проекты"
+            value="156"
+            icon="🎯"
+            color="hover:shadow-lg"
+          />
+        </div>
 
-            <div className="pt-6">
-              <div className="flow-root bg-white rounded-lg px-6 pb-8">
-                <div className="-mt-6">
-                  <div className="inline-flex items-center justify-center p-3 bg-indigo-500 rounded-md shadow-lg">
-                    <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                    </svg>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <h3 className="text-xl font-semibold mb-4">Последние активности</h3>
+            <div className="space-y-4">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="flex items-center space-x-4 p-2 hover:bg-gray-50 rounded">
+                  <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                    📝
                   </div>
-                  <h3 className="mt-8 text-lg font-medium text-gray-900 tracking-tight">Аналитика</h3>
-                  <p className="mt-5 text-base text-gray-500">
-                    Детальная статистика и отчеты по всем аспектам работы компании
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="pt-6">
-              <div className="flow-root bg-white rounded-lg px-6 pb-8">
-                <div className="-mt-6">
-                  <div className="inline-flex items-center justify-center p-3 bg-indigo-500 rounded-md shadow-lg">
-                    <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
-                    </svg>
+                  <div>
+                    <p className="font-medium">Обновлен статус проекта</p>
+                    <p className="text-sm text-gray-500">2 часа назад</p>
                   </div>
-                  <h3 className="mt-8 text-lg font-medium text-gray-900 tracking-tight">Безопасность</h3>
-                  <p className="mt-5 text-base text-gray-500">
-                    Современные методы защиты данных и разграничения доступа
-                  </p>
                 </div>
-              </div>
+              ))}
             </div>
           </div>
-        </div>
+
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <h3 className="text-xl font-semibold mb-4">Предстоящие события</h3>
+            <div className="space-y-4">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="flex items-center space-x-4 p-2 hover:bg-gray-50 rounded">
+                  <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                    📅
+                  </div>
+                  <div>
+                    <p className="font-medium">Встреча команды</p>
+                    <p className="text-sm text-gray-500">Завтра, 10:00</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </main>
+    </div>
   );
 }
