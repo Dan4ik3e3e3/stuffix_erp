@@ -14,6 +14,8 @@
     "docker:logs": "docker-compose logs -f"
   },
   "dependencies": {
+    "@headlessui/react": "^2.2.0",
+    "@heroicons/react": "^2.2.0",
     "@sentry/nextjs": "^9.9.0",
     "bcryptjs": "^3.0.2",
     "next": "^15.2.4",
@@ -30,11 +32,11 @@
     "@types/node": "^20.17.27",
     "@types/react": "^18.3.20",
     "@types/react-dom": "^18.3.5",
-    "autoprefixer": "^10.0.1",
+    "autoprefixer": "^10.4.21",
     "eslint": "^8",
     "eslint-config-next": "14.1.0",
-    "postcss": "^8",
-    "tailwindcss": "^3.3.0",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^3.4.17",
     "typescript": "^5.8.2"
   }
 }

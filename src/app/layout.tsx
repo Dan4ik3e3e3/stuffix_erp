@@ -18,13 +18,19 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="ru">
-      <body className={`${inter.className} antialiased`}>
+    <html lang="ru" className="h-full bg-gray-50">
+      <body className={`${inter.className} h-full antialiased`}>
         <SessionProvider>
-          <div className="min-h-screen bg-gray-100">
+          <div className="min-h-full">
             <Sidebar />
-            <Header />
-            {children}
+            <div className="lg:pl-72">
+              <Header />
+              <main className="py-10">
+                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                  {children}
+                </div>
+              </main>
+            </div>
           </div>
         </SessionProvider>
       </body>
