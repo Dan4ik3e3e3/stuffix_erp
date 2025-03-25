@@ -11,7 +11,7 @@
   "dependencies": {
     "@types/next-auth": "^3.13.0",
     "bcryptjs": "^3.0.2",
-    "next": "^15.2.3",
+    "next": "^15.2.4",
     "next-auth": "^4.24.11",
     "react": "^18",
     "react-dom": "^18"
@@ -20,14 +20,21 @@
     "@types/bcryptjs": "^2.4.6",
     "@types/next": "^8.0.7",
     "@types/node": "^20.17.27",
+    "@types/node-fetch": "^2.6.12",
     "@types/prop-types": "^15.7.14",
     "@types/react": "^18.3.20",
     "@types/react-dom": "^18.3.5",
+    "@types/react-loadable": "^5.5.11",
+    "@types/source-list-map": "^0.1.6",
+    "@types/tapable": "^2.2.7",
+    "@types/uglify-js": "^3.17.5",
+    "@types/webpack": "^5.28.5",
+    "@types/webpack-sources": "^3.2.3",
     "autoprefixer": "^10.0.1",
     "eslint": "^8",
     "eslint-config-next": "14.1.0",
     "postcss": "^8",
     "tailwindcss": "^3.3.0",
-    "typescript": "^5"
+    "typescript": "^5.8.2"
   }
 }
