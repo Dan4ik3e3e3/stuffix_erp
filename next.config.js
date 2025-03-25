@@ -6,7 +6,7 @@ const nextConfig = {
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
   },
   images: {
-    domains: ['stuffix.online', 'www.stuffix.online'],
+    domains: ['stuffix.online', 'www.stuffix.online', 'ui-avatars.com'],
     minimumCacheTTL: 60,
     formats: ['image/webp'],
   },
@@ -60,6 +60,13 @@ const nextConfig = {
         ],
       },
     ]
+  },
+  webpack: (config) => {
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      '@': './src',
+    };
+    return config;
   },
 }
 
