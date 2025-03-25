@@ -7,11 +7,23 @@ const nextConfig = {
   },
   images: {
     domains: ['stuffix.online', 'www.stuffix.online'],
+    minimumCacheTTL: 60,
+    formats: ['image/webp'],
   },
   poweredByHeader: false,
   compress: true,
   reactStrictMode: true,
   swcMinify: true,
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',
+  },
+  experimental: {
+    optimizeCss: true,
+    scrollRestoration: true,
+  },
+  analyticsId: process.env.NEXT_PUBLIC_ANALYTICS_ID,
+  optimizeFonts: true,
+  productionBrowserSourceMaps: true,
   headers: async () => {
     return [
       {
@@ -35,8 +47,16 @@ const nextConfig = {
           },
           {
             key: 'Strict-Transport-Security',
-            value: 'max-age=31536000; includeSubDomains'
+            value: 'max-age=31536000; includeSubDomains; preload'
           },
+          {
+            key: 'Content-Security-Policy',
+            value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' *.vercel-analytics.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data: https:; connect-src 'self' *.vercel-analytics.com"
+          },
+          {
+            key: 'Permissions-Policy',
+            value: 'camera=(), microphone=(), geolocation=()'
+          }
         ],
       },
     ]

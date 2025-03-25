@@ -1,15 +1,13 @@
-import NextAuth from 'next-auth'
-import CredentialsProvider from 'next-auth/providers/credentials'
-import type { NextAuthOptions } from 'next-auth'
-import type { User, Session } from 'next-auth'
-import type { JWT } from 'next-auth/jwt'
+import CredentialsProvider from 'next-auth/providers/credentials';
+import type { NextAuthOptions } from 'next-auth';
+import type { User, Session } from 'next-auth';
 
 interface CustomUser extends User {
-  role?: string
+  role?: string;
 }
 
 interface CustomSession extends Session {
-  user?: CustomUser
+  user?: CustomUser;
 }
 
 export const authOptions: NextAuthOptions = {
@@ -21,31 +19,31 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
-        console.log('Authorize called with credentials:', { email: credentials?.email })
+        console.log('Authorize called with credentials:', { email: credentials?.email });
         
         if (!credentials?.email || !credentials?.password) {
-          console.log('Missing credentials')
-          throw new Error('Пожалуйста, введите email и пароль')
+          console.log('Missing credentials');
+          throw new Error('Пожалуйста, введите email и пароль');
         }
 
         try {
           // Здесь будет ваша логика проверки пользователя
           // Пока используем тестовые данные
           if (credentials.email === 'admin@stuffix.online' && credentials.password === 'admin123') {
-            console.log('Login successful for admin')
+            console.log('Login successful for admin');
             return {
               id: '1',
               email: credentials.email,
               name: 'Admin',
               role: 'admin'
-            }
+            };
           }
           
-          console.log('Invalid credentials')
-          throw new Error('Неверный email или пароль')
+          console.log('Invalid credentials');
+          throw new Error('Неверный email или пароль');
         } catch (error) {
-          console.error('Authorization error:', error)
-          throw error
+          console.error('Authorization error:', error);
+          throw error;
         }
       }
     })
@@ -56,18 +54,18 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async jwt({ token, user }) {
-      console.log('JWT callback:', { token, user })
+      console.log('JWT callback:', { token, user });
       if (user) {
-        token.role = (user as CustomUser).role
+        token.role = (user as CustomUser).role;
       }
-      return token
+      return token;
     },
     async session({ session, token }) {
-      console.log('Session callback:', { session, token })
+      console.log('Session callback:', { session, token });
       if (session.user) {
-        (session.user as CustomUser).role = token.role as string
+        (session.user as CustomUser).role = token.role as string;
       }
-      return session
+      return session;
     }
   },
   pages: {
@@ -78,16 +76,13 @@ export const authOptions: NextAuthOptions = {
   debug: process.env.NODE_ENV === 'development',
   logger: {
     error(code, metadata) {
-      console.error('NextAuth error:', code, metadata)
+      console.error('NextAuth error:', code, metadata);
     },
     warn(code) {
-      console.warn('NextAuth warning:', code)
+      console.warn('NextAuth warning:', code);
     },
     debug(code, metadata) {
-      console.log('NextAuth debug:', code, metadata)
+      console.log('NextAuth debug:', code, metadata);
     }
   }
-}
-
-const handler = NextAuth(authOptions)
-export { handler as GET, handler as POST } 
+}; 

@@ -14,6 +14,7 @@
     "docker:logs": "docker-compose logs -f"
   },
   "dependencies": {
+    "@sentry/nextjs": "^9.9.0",
     "bcryptjs": "^3.0.2",
     "next": "^15.2.4",
     "next-auth": "^4.24.11",
