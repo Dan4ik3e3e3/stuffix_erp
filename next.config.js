@@ -2,11 +2,11 @@
 const nextConfig = {
   output: 'standalone',
   env: {
-    NEXTAUTH_URL: 'https://stuffix.online',
+    NEXTAUTH_URL: process.env.NEXTAUTH_URL || 'https://stuffix.online',
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
   },
   images: {
-    domains: ['stuffix.online'],
+    domains: ['stuffix.online', 'www.stuffix.online'],
   },
   poweredByHeader: false,
   compress: true,
@@ -32,6 +32,10 @@ const nextConfig = {
           {
             key: 'Referrer-Policy',
             value: 'strict-origin-when-cross-origin',
+          },
+          {
+            key: 'Strict-Transport-Security',
+            value: 'max-age=31536000; includeSubDomains'
           },
         ],
       },

@@ -8,7 +8,10 @@
     "start": "next start",
     "lint": "next lint",
     "prod:build": "NODE_ENV=production next build",
-    "prod:start": "NODE_ENV=production next start"
+    "prod:start": "NODE_ENV=production next start -p 3000",
+    "docker:build": "docker-compose build",
+    "docker:up": "docker-compose up -d",
+    "docker:logs": "docker-compose logs -f"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",
