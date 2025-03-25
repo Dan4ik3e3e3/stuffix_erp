@@ -16,6 +16,7 @@
   "dependencies": {
     "@headlessui/react": "^1.7.18",
     "@heroicons/react": "^2.1.1",
+    "@sentry/nextjs": "^9.9.0",
     "bcryptjs": "^3.0.2",
     "next": "^14.1.0",
     "next-auth": "^4.24.11",
