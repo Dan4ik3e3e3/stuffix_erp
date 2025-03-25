@@ -64,77 +64,73 @@ const DashboardCard = ({ title, value, icon, color }: { title: string; value: st
   );
 };
 
-export default function Home() {
+export default function Dashboard() {
   const [currentDate] = useState(new Date().toLocaleDateString('ru-RU'));
+
+  const metrics = [
+    { title: 'Активные проекты', value: '12', change: '+2' },
+    { title: 'Сотрудники', value: '48', change: '+5' },
+    { title: 'Задачи на сегодня', value: '23', change: '-3' },
+    { title: 'Выполнено в этом месяце', value: '156', change: '+12' },
+  ];
+
+  const recentActivities = [
+    { text: 'Новый проект создан: "Разработка CRM"', time: '2 часа назад' },
+    { text: 'Задача завершена: "Дизайн главной страницы"', time: '4 часа назад' },
+    { text: 'Добавлен новый сотрудник: Иван Петров', time: '6 часов назад' },
+  ];
+
+  const upcomingEvents = [
+    { title: 'Встреча команды', date: '15:00 сегодня' },
+    { title: 'Дедлайн проекта UI/UX', date: 'Завтра' },
+    { title: 'Ревью кода', date: '16 марта' },
+  ];
 
   return (
     <div className="min-h-screen bg-gray-100">
       <Sidebar />
       <Header />
       
-      <main className="ml-64 pt-16 p-6">
+      <main className="ml-64 pt-16 p-8">
         <div className="mb-8">
-          <h2 className="text-2xl font-bold mb-2">Добро пожаловать в Stuffix ERP</h2>
-          <p className="text-gray-600">Сегодня: {currentDate}</p>
+          <h1 className="text-3xl font-bold mb-2">Дашборд</h1>
+          <p className="text-gray-600">{currentDate}</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <DashboardCard
-            title="Активные проекты"
-            value="12"
-            icon="📁"
-            color="hover:shadow-lg"
-          />
-          <DashboardCard
-            title="Сотрудники"
-            value="48"
-            icon="👥"
-            color="hover:shadow-lg"
-          />
-          <DashboardCard
-            title="Задачи на сегодня"
-            value="24"
-            icon="✓"
-            color="hover:shadow-lg"
-          />
-          <DashboardCard
-            title="Завершенные проекты"
-            value="156"
-            icon="🎯"
-            color="hover:shadow-lg"
-          />
+          {metrics.map((metric, index) => (
+            <div key={index} className="bg-white p-6 rounded-lg shadow-md">
+              <h3 className="text-gray-600 mb-2">{metric.title}</h3>
+              <div className="flex items-center justify-between">
+                <span className="text-2xl font-bold">{metric.value}</span>
+                <span className={`text-sm ${metric.change.startsWith('+') ? 'text-green-500' : 'text-red-500'}`}>
+                  {metric.change}
+                </span>
+              </div>
+            </div>
+          ))}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h3 className="text-xl font-semibold mb-4">Последние активности</h3>
+          <div className="bg-white p-6 rounded-lg shadow-md">
+            <h2 className="text-xl font-bold mb-4">Последние активности</h2>
             <div className="space-y-4">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="flex items-center space-x-4 p-2 hover:bg-gray-50 rounded">
-                  <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                    📝
-                  </div>
-                  <div>
-                    <p className="font-medium">Обновлен статус проекта</p>
-                    <p className="text-sm text-gray-500">2 часа назад</p>
-                  </div>
+              {recentActivities.map((activity, index) => (
+                <div key={index} className="flex justify-between items-center">
+                  <p>{activity.text}</p>
+                  <span className="text-sm text-gray-500">{activity.time}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h3 className="text-xl font-semibold mb-4">Предстоящие события</h3>
+          <div className="bg-white p-6 rounded-lg shadow-md">
+            <h2 className="text-xl font-bold mb-4">Предстоящие события</h2>
             <div className="space-y-4">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="flex items-center space-x-4 p-2 hover:bg-gray-50 rounded">
-                  <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                    📅
-                  </div>
-                  <div>
-                    <p className="font-medium">Встреча команды</p>
-                    <p className="text-sm text-gray-500">Завтра, 10:00</p>
-                  </div>
+              {upcomingEvents.map((event, index) => (
+                <div key={index} className="flex justify-between items-center">
+                  <p>{event.title}</p>
+                  <span className="text-sm text-gray-500">{event.date}</span>
                 </div>
               ))}
             </div>
