@@ -18,7 +18,6 @@ const nextConfig = {
     removeConsole: process.env.NODE_ENV === 'production',
   },
   experimental: {
-    optimizeCss: true,
     scrollRestoration: true,
   },
   analyticsId: process.env.NEXT_PUBLIC_ANALYTICS_ID,
