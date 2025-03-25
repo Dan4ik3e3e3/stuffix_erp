@@ -176,8 +176,8 @@ export function Header() {
                 >
                   Выйти
                 </Disclosure.Button>
-              </div>
-            </div>
+      </div>
+      </div>
           </Disclosure.Panel>
         </>
       )}

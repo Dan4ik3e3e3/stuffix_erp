@@ -7,6 +7,7 @@
   "regions": ["fra1"],
   "env": {
     "NEXTAUTH_URL": "https://stuffix.online",
-    "NEXTAUTH_SECRET": "@nextauth-secret"
+    "NEXTAUTH_SECRET": "@nextauth_secret",
+    "NEXT_PUBLIC_ANALYTICS_ID": "@next_public_analytics_id"
   }
 } 
