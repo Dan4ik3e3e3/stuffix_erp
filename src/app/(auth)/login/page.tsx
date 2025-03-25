@@ -1,15 +1,23 @@
 'use client';
 
-import { useState } from 'react';
-import { signIn } from 'next-auth/react';
+import { useState, useEffect } from 'react';
+import { signIn, useSession } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 
 function LoginForm() {
   const router = useRouter();
+  const { data: session, status } = useSession();
   const searchParams = useSearchParams();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (status === 'authenticated' && session) {
+      console.log('User is already authenticated, redirecting to dashboard');
+      router.push('/dashboard');
+    }
+  }, [status, session, router]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -21,6 +29,7 @@ function LoginForm() {
     const password = formData.get('password') as string;
 
     try {
+      console.log('Attempting login with:', { email });
       const result = await signIn('credentials', {
         email,
         password,
@@ -34,19 +43,29 @@ function LoginForm() {
       }
 
       if (result.error) {
-        setError(result.error);
+        console.error('Login error:', result.error);
+        if (result.error === 'CredentialsSignin') {
+          setError('Неверный email или пароль');
+        } else {
+          setError(result.error);
+        }
         return;
       }
 
+      console.log('Login successful, redirecting to dashboard');
       router.push('/dashboard');
       router.refresh();
     } catch (error) {
       console.error('Login error:', error);
-      setError('An error occurred during login');
+      setError('Произошла ошибка при входе');
     } finally {
       setIsLoading(false);
     }
   };
+
+  if (status === 'loading') {
+    return <div>Загрузка...</div>;
+  }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
