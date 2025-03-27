@@ -12,7 +12,10 @@ async function connectDB() {
       return mongoose.connection;
     }
 
-    await mongoose.connect(MONGODB_URI);
+    await mongoose.connect(MONGODB_URI, {
+      maxPoolSize: 10,
+    });
+    
     console.log('MongoDB connected successfully');
     return mongoose.connection;
   } catch (error) {

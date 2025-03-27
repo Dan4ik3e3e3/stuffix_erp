@@ -9,12 +9,27 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
+    const { email, password, name } = req.body;
+
+    // Проверяем наличие всех необходимых полей
+    if (!email || !password || !name) {
+      return res.status(400).json({ error: 'Все поля обязательны для заполнения' });
+    }
+
+    // Проверяем формат email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ error: 'Неверный формат email' });
+    }
+
+    // Проверяем длину пароля
+    if (password.length < 6) {
+      return res.status(400).json({ error: 'Пароль должен содержать минимум 6 символов' });
+    }
+
     console.log('Connecting to database...');
     await connectDB();
     console.log('Connected to database');
-
-    const { email, password, name } = req.body;
-    console.log('Received registration data:', { email, name });
 
     // Проверяем, есть ли уже пользователи в системе
     console.log('Checking existing users...');
@@ -24,7 +39,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Если есть пользователи, запрещаем регистрацию через этот endpoint
     if (usersCount > 0) {
       console.log('Registration blocked: users already exist');
-      return res.status(403).json({ error: 'Registration is closed' });
+      return res.status(403).json({ error: 'Регистрация закрыта' });
     }
 
     // Проверяем, не занят ли email
@@ -32,7 +47,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       console.log('Email already taken');
-      return res.status(400).json({ error: 'Email already registered' });
+      return res.status(400).json({ error: 'Email уже зарегистрирован' });
     }
 
     // Хешируем пароль
@@ -47,11 +62,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       password: hashedPassword,
       role: 'admin', // Первый пользователь всегда админ
     });
-    console.log('Admin user created successfully');
+    console.log('Admin user created successfully:', user._id);
 
-    res.status(201).json({ message: 'User created successfully' });
+    res.status(201).json({ message: 'Пользователь успешно создан' });
   } catch (error) {
     console.error('Registration error:', error);
-    res.status(500).json({ error: 'Error creating user' });
+    res.status(500).json({ error: 'Ошибка при создании пользователя' });
   }
 } 
