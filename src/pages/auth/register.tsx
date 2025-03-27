@@ -7,6 +7,7 @@ import {
   Button,
   Typography,
   Paper,
+  Alert,
 } from '@mui/material';
 
 export default function Register() {
@@ -27,6 +28,7 @@ export default function Register() {
     };
 
     try {
+      console.log('Sending registration request...');
       const response = await fetch('/api/auth/register', {
         method: 'POST',
         headers: {
@@ -35,13 +37,17 @@ export default function Register() {
         body: JSON.stringify(data),
       });
 
+      const result = await response.json();
+
       if (response.ok) {
+        console.log('Registration successful');
         router.push('/auth/signin');
       } else {
-        const error = await response.json();
-        setError(error.error || 'Ошибка при регистрации');
+        console.error('Registration failed:', result);
+        setError(result.error || 'Ошибка при регистрации');
       }
     } catch (err) {
+      console.error('Registration error:', err);
       setError('Ошибка при регистрации');
     } finally {
       setLoading(false);
@@ -90,9 +96,9 @@ export default function Register() {
               autoComplete="new-password"
             />
             {error && (
-              <Typography color="error" align="center" sx={{ mt: 2 }}>
+              <Alert severity="error" sx={{ mt: 2 }}>
                 {error}
-              </Typography>
+              </Alert>
             )}
             <Button
               type="submit"
