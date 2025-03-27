@@ -1,0 +1,17 @@
+// Проверяем, есть ли уже пользователи
+const usersCount = db.users.countDocuments();
+
+if (usersCount > 0) {
+  print('Admin already exists');
+} else {
+  // Создаем администратора
+  db.users.insertOne({
+    name: 'Admin',
+    email: 'dkuzmitskiyy@bk.ru',
+    password: '$2b$12$aiG/dqbJET5YwCy14IVuf.hpbzov/tphxXdBhkj3LzmgiFxPOhMqi',
+    role: 'admin',
+    createdAt: new Date(),
+    updatedAt: new Date()
+  });
+  print('Admin created successfully');
+} 

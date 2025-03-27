@@ -34,3 +34,33 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+# Stuffix ERP
+
+## Создание администратора
+
+Для создания первого администратора системы выполните следующие команды в MongoDB Shell:
+
+```mongodb
+// Проверяем, есть ли уже пользователи
+const usersCount = db.users.countDocuments();
+
+if (usersCount > 0) {
+  print('Admin already exists');
+} else {
+  // Создаем администратора
+  db.users.insertOne({
+    name: 'Admin',
+    email: 'dkuzmitskiyy@bk.ru',
+    password: '$2b$12$aiG/dqbJET5YwCy14IVuf.hpbzov/tphxXdBhkj3LzmgiFxPOhMqi',
+    role: 'admin',
+    createdAt: new Date(),
+    updatedAt: new Date()
+  });
+  print('Admin created successfully');
+}
+```
+
+После создания администратора вы сможете войти в систему с учетными данными:
+- Email: dkuzmitskiyy@bk.ru
+- Пароль: Strelok101
