@@ -1,49 +1,20 @@
 'use client';
 
 import { useState } from 'react';
-import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
 import {
   Box,
-  Container,
-  Grid,
-  Paper,
   Typography,
-  CircularProgress,
-  IconButton,
-  Drawer,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  AppBar,
-  Toolbar,
-  Avatar,
+  Paper,
 } from '@mui/material';
-import {
-  Menu as MenuIcon,
-  Dashboard as DashboardIcon,
-  People as PeopleIcon,
-  Assignment as AssignmentIcon,
-  Settings as SettingsIcon,
-  Notifications as NotificationsIcon,
-  ExitToApp as LogoutIcon,
-} from '@mui/icons-material';
-import { signOut } from 'next-auth/react';
-
-const drawerWidth = 240;
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 export default function DashboardPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const [mobileOpen, setMobileOpen] = useState(false);
 
   if (status === 'loading') {
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <CircularProgress />
-      </Box>
-    );
+    return <div>Загрузка...</div>;
   }
 
   if (status === 'unauthenticated') {
@@ -51,182 +22,92 @@ export default function DashboardPage() {
     return null;
   }
 
-  const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen);
-  };
-
-  const drawer = (
-    <Box sx={{ mt: 2 }}>
-      <List>
-        <ListItem button selected>
-          <ListItemIcon>
-            <DashboardIcon />
-          </ListItemIcon>
-          <ListItemText primary="Дашборд" />
-        </ListItem>
-        <ListItem button>
-          <ListItemIcon>
-            <PeopleIcon />
-          </ListItemIcon>
-          <ListItemText primary="Сотрудники" />
-        </ListItem>
-        <ListItem button>
-          <ListItemIcon>
-            <AssignmentIcon />
-          </ListItemIcon>
-          <ListItemText primary="Задачи" />
-        </ListItem>
-        <ListItem button>
-          <ListItemIcon>
-            <SettingsIcon />
-          </ListItemIcon>
-          <ListItemText primary="Настройки" />
-        </ListItem>
-      </List>
-    </Box>
-  );
-
   return (
-    <Box sx={{ display: 'flex' }}>
-      <AppBar
-        position="fixed"
-        sx={{
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
-          ml: { sm: `${drawerWidth}px` },
-          backgroundColor: '#1e3c72',
-        }}
-      >
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            edge="start"
-            onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: 'none' } }}
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+        <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 calc(50% - 12px)', lg: '1 1 calc(25% - 18px)' } }}>
+          <Paper
+            sx={{
+              p: 2,
+              display: 'flex',
+              flexDirection: 'column',
+              height: 140,
+            }}
           >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-            Stuffix ERP
-          </Typography>
-          <IconButton color="inherit">
-            <NotificationsIcon />
-          </IconButton>
-          <IconButton color="inherit" onClick={() => signOut()}>
-            <LogoutIcon />
-          </IconButton>
-          <Avatar sx={{ ml: 1 }}>{session?.user?.name?.[0] || 'U'}</Avatar>
-        </Toolbar>
-      </AppBar>
+            <Typography component="h2" variant="h6" color="primary" gutterBottom>
+              Активные проекты
+            </Typography>
+            <Typography component="p" variant="h4">
+              24
+            </Typography>
+            <Typography color="text.secondary" sx={{ flex: 1 }}>
+              +15% с прошлого месяца
+            </Typography>
+          </Paper>
+        </Box>
 
-      <Box
-        component="nav"
-        sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
-      >
-        <Drawer
-          variant="temporary"
-          open={mobileOpen}
-          onClose={handleDrawerToggle}
-          ModalProps={{
-            keepMounted: true,
-          }}
-          sx={{
-            display: { xs: 'block', sm: 'none' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
-          }}
-        >
-          {drawer}
-        </Drawer>
-        <Drawer
-          variant="permanent"
-          sx={{
-            display: { xs: 'none', sm: 'block' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
-          }}
-          open
-        >
-          {drawer}
-        </Drawer>
-      </Box>
+        <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 calc(50% - 12px)', lg: '1 1 calc(25% - 18px)' } }}>
+          <Paper
+            sx={{
+              p: 2,
+              display: 'flex',
+              flexDirection: 'column',
+              height: 140,
+            }}
+          >
+            <Typography component="h2" variant="h6" color="primary" gutterBottom>
+              Сотрудники
+            </Typography>
+            <Typography component="p" variant="h4">
+              156
+            </Typography>
+            <Typography color="text.secondary" sx={{ flex: 1 }}>
+              +3 за последнюю неделю
+            </Typography>
+          </Paper>
+        </Box>
 
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          p: 3,
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
-          mt: 8,
-        }}
-      >
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={6} lg={3}>
-            <Paper
-              sx={{
-                p: 2,
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-              }}
-            >
-              <Typography variant="h3" component="div" color="primary">
-                12
-              </Typography>
-              <Typography variant="subtitle1" color="text.secondary">
-                Активных проектов
-              </Typography>
-            </Paper>
-          </Grid>
-          <Grid item xs={12} md={6} lg={3}>
-            <Paper
-              sx={{
-                p: 2,
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-              }}
-            >
-              <Typography variant="h3" component="div" color="primary">
-                48
-              </Typography>
-              <Typography variant="subtitle1" color="text.secondary">
-                Сотрудников
-              </Typography>
-            </Paper>
-          </Grid>
-          <Grid item xs={12} md={6} lg={3}>
-            <Paper
-              sx={{
-                p: 2,
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-              }}
-            >
-              <Typography variant="h3" component="div" color="primary">
-                156
-              </Typography>
-              <Typography variant="subtitle1" color="text.secondary">
-                Задач в работе
-              </Typography>
-            </Paper>
-          </Grid>
-          <Grid item xs={12} md={6} lg={3}>
-            <Paper
-              sx={{
-                p: 2,
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-              }}
-            >
-              <Typography variant="h3" component="div" color="primary">
-                89%
-              </Typography>
-              <Typography variant="subtitle1" color="text.secondary">
-                Выполнено в срок
-              </Typography>
-            </Paper>
-          </Grid>
-        </Grid>
+        <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 calc(50% - 12px)', lg: '1 1 calc(25% - 18px)' } }}>
+          <Paper
+            sx={{
+              p: 2,
+              display: 'flex',
+              flexDirection: 'column',
+              height: 140,
+            }}
+          >
+            <Typography component="h2" variant="h6" color="primary" gutterBottom>
+              Задачи на сегодня
+            </Typography>
+            <Typography component="p" variant="h4">
+              12
+            </Typography>
+            <Typography color="text.secondary" sx={{ flex: 1 }}>
+              5 выполнено
+            </Typography>
+          </Paper>
+        </Box>
+
+        <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 calc(50% - 12px)', lg: '1 1 calc(25% - 18px)' } }}>
+          <Paper
+            sx={{
+              p: 2,
+              display: 'flex',
+              flexDirection: 'column',
+              height: 140,
+            }}
+          >
+            <Typography component="h2" variant="h6" color="primary" gutterBottom>
+              Выполнение в срок
+            </Typography>
+            <Typography component="p" variant="h4">
+              98%
+            </Typography>
+            <Typography color="text.secondary" sx={{ flex: 1 }}>
+              За последний месяц
+            </Typography>
+          </Paper>
+        </Box>
       </Box>
     </Box>
   );

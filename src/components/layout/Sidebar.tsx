@@ -14,23 +14,21 @@ import {
   Collapse,
   IconButton,
 } from '@mui/material';
-import {
-  Search as SearchIcon,
-  Dashboard as DashboardIcon,
-  Person as PersonIcon,
-  Phone as PhoneIcon,
-  Assignment as AssignmentIcon,
-  People as PeopleIcon,
-  Assessment as AssessmentIcon,
-  PhoneInTalk as PhoneInTalkIcon,
-  BarChart as BarChartIcon,
-  EventNote as EventNoteIcon,
-  Group as GroupIcon,
-  Home as HomeIcon,
-  Block as BlockIcon,
-  ExpandLess,
-  ExpandMore,
-} from '@mui/icons-material';
+import SearchIcon from '@mui/icons-material/Search';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import PersonIcon from '@mui/icons-material/Person';
+import PhoneIcon from '@mui/icons-material/Phone';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import PeopleIcon from '@mui/icons-material/People';
+import AssessmentIcon from '@mui/icons-material/Assessment';
+import PhoneInTalkIcon from '@mui/icons-material/PhoneInTalk';
+import BarChartIcon from '@mui/icons-material/BarChart';
+import EventNoteIcon from '@mui/icons-material/EventNote';
+import GroupIcon from '@mui/icons-material/Group';
+import HomeIcon from '@mui/icons-material/Home';
+import BlockIcon from '@mui/icons-material/Block';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useRouter, usePathname } from 'next/navigation';
 
 const drawerWidth = 280;
@@ -65,7 +63,7 @@ const navItems: NavItem[] = [
 
 export default function Sidebar() {
   const router = useRouter();
-  const pathname = usePathname();
+  const pathname = usePathname() || '';
   const [searchQuery, setSearchQuery] = useState('');
   const [openStatistics, setOpenStatistics] = useState(false);
 
@@ -138,7 +136,7 @@ export default function Sidebar() {
                       fontWeight: pathname.startsWith(item.path) ? 600 : 400,
                     }}
                   />
-                  {openStatistics ? <ExpandLess /> : <ExpandMore />}
+                  {openStatistics ? <ExpandLessIcon /> : <ExpandMoreIcon />}
                 </ListItemButton>
                 <Collapse in={openStatistics} timeout="auto" unmountOnExit>
                   <List component="div" disablePadding>
