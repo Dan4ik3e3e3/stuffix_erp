@@ -3,130 +3,138 @@
 import { useState } from 'react';
 import {
   AppBar,
+  Box,
   Toolbar,
   IconButton,
   Typography,
-  TextField,
-  InputAdornment,
-  Badge,
-  Avatar,
-  Box,
   Menu,
   MenuItem,
+  Badge,
+  InputBase,
+  Avatar,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import { signOut } from 'next-auth/react';
-import { useSession } from 'next-auth/react';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { alpha } from '@mui/material/styles';
 
 export default function Header() {
-  const { data: session } = useSession();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const handleProfileClick = (event: React.MouseEvent<HTMLElement>) => {
+  const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleClose = () => {
+  const handleMenuClose = () => {
     setAnchorEl(null);
   };
 
-  const handleLogout = () => {
-    signOut();
-    handleClose();
-  };
+  const menuId = 'primary-search-account-menu';
+  const isMenuOpen = Boolean(anchorEl);
 
-  const currentTime = new Date().toLocaleTimeString('ru-RU', {
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-
-  const currentDate = new Date().toLocaleDateString('ru-RU', {
-    day: '2-digit',
-    month: 'long',
-    year: 'numeric',
-  });
+  const renderMenu = (
+    <Menu
+      anchorEl={anchorEl}
+      anchorOrigin={{
+        vertical: 'bottom',
+        horizontal: 'right',
+      }}
+      id={menuId}
+      keepMounted
+      transformOrigin={{
+        vertical: 'top',
+        horizontal: 'right',
+      }}
+      open={isMenuOpen}
+      onClose={handleMenuClose}
+    >
+      <MenuItem onClick={handleMenuClose}>Профиль</MenuItem>
+      <MenuItem onClick={handleMenuClose}>Настройки</MenuItem>
+      <MenuItem onClick={handleMenuClose}>Выйти</MenuItem>
+    </Menu>
+  );
 
   return (
-    <AppBar
-      position="fixed"
-      sx={{
-        zIndex: (theme) => theme.zIndex.drawer + 1,
-        backgroundColor: 'background.paper',
-        boxShadow: 'none',
-        borderBottom: '1px solid rgba(163, 174, 208, 0.2)',
-      }}
-    >
-      <Toolbar>
-        <Typography
-          variant="body2"
-          color="text.secondary"
-          sx={{ mr: 4, display: { xs: 'none', md: 'block' } }}
-        >
-          {currentDate} | {currentTime}
-        </Typography>
-
-        <TextField
-          placeholder="Поиск по системе (ID, Ф.И.О., номер телефона, отклика, тикета)"
-          size="small"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          sx={{
-            flexGrow: 1,
-            maxWidth: 600,
-            '& .MuiOutlinedInput-root': {
-              backgroundColor: 'background.default',
+    <>
+      <AppBar 
+        position="fixed" 
+        sx={{ 
+          zIndex: (theme) => theme.zIndex.drawer + 1,
+          backgroundColor: '#fff',
+          color: '#1a237e',
+          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.12)'
+        }}
+      >
+        <Toolbar>
+          <Box sx={{ flexGrow: 1 }} />
+          
+          <Box sx={{ 
+            position: 'relative',
+            borderRadius: 1,
+            backgroundColor: (theme) => alpha(theme.palette.common.black, 0.04),
+            '&:hover': {
+              backgroundColor: (theme) => alpha(theme.palette.common.black, 0.08),
             },
-          }}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon color="action" />
-              </InputAdornment>
-            ),
-          }}
-        />
-
-        <Box sx={{ ml: 'auto', display: 'flex', alignItems: 'center' }}>
-          <IconButton
-            size="large"
-            color="default"
-            sx={{ mr: 2 }}
-          >
-            <Badge badgeContent={4} color="error">
-              <NotificationsIcon />
-            </Badge>
-          </IconButton>
-
-          <IconButton
-            onClick={handleProfileClick}
-            size="small"
-            sx={{ ml: 2 }}
-          >
-            <Avatar
+            marginRight: 2,
+            marginLeft: 0,
+            width: '100%',
+            maxWidth: 400,
+          }}>
+            <Box sx={{ 
+              padding: '0 12px',
+              height: '100%',
+              position: 'absolute',
+              pointerEvents: 'none',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+              <SearchIcon sx={{ color: '#1a237e' }} />
+            </Box>
+            <InputBase
+              placeholder="Поиск..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               sx={{
-                width: 40,
-                height: 40,
-                bgcolor: 'primary.main',
+                color: '#1a237e',
+                padding: '8px 8px 8px 48px',
+                width: '100%',
+                '& .MuiInputBase-input': {
+                  padding: '8px 8px 8px 0',
+                },
               }}
-            >
-              {session?.user?.name?.[0] || 'U'}
-            </Avatar>
-          </IconButton>
+            />
+          </Box>
 
-          <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={handleClose}
-            onClick={handleClose}
-            transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-            anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-          >
-            <MenuItem onClick={handleLogout}>Выйти</MenuItem>
-          </Menu>
-        </Box>
-      </Toolbar>
-    </AppBar>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <IconButton
+              size="large"
+              color="inherit"
+            >
+              <Badge badgeContent={4} color="error">
+                <NotificationsIcon />
+              </Badge>
+            </IconButton>
+            
+            <IconButton
+              size="large"
+              edge="end"
+              aria-label="account of current user"
+              aria-controls={menuId}
+              aria-haspopup="true"
+              onClick={handleProfileMenuOpen}
+              color="inherit"
+              sx={{ ml: 1 }}
+            >
+              <Avatar sx={{ width: 32, height: 32, bgcolor: '#1a237e' }}>
+                <AccountCircleIcon />
+              </Avatar>
+            </IconButton>
+          </Box>
+        </Toolbar>
+      </AppBar>
+      {renderMenu}
+    </>
   );
 } 

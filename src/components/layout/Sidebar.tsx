@@ -5,31 +5,28 @@ import {
   Box,
   Drawer,
   List,
+  ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  Typography,
-  TextField,
-  InputAdornment,
   Collapse,
-  IconButton,
+  Typography,
 } from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import PersonIcon from '@mui/icons-material/Person';
-import PhoneIcon from '@mui/icons-material/Phone';
-import AssignmentIcon from '@mui/icons-material/Assignment';
-import PeopleIcon from '@mui/icons-material/People';
-import AssessmentIcon from '@mui/icons-material/Assessment';
-import PhoneInTalkIcon from '@mui/icons-material/PhoneInTalk';
-import BarChartIcon from '@mui/icons-material/BarChart';
-import EventNoteIcon from '@mui/icons-material/EventNote';
-import GroupIcon from '@mui/icons-material/Group';
-import HomeIcon from '@mui/icons-material/Home';
-import BlockIcon from '@mui/icons-material/Block';
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { useRouter, usePathname } from 'next/navigation';
+import {
+  Person,
+  Group,
+  Phone,
+  Assignment,
+  Assessment,
+  AccessTime,
+  People,
+  Home,
+  Business,
+  Block,
+  ExpandLess,
+  ExpandMore,
+} from '@mui/icons-material';
+import Link from 'next/link';
 
 const drawerWidth = 280;
 
@@ -41,42 +38,98 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { title: 'Мой кабинет', path: '/dashboard', icon: <DashboardIcon /> },
-  { title: 'Мои соискатели', path: '/my-candidates', icon: <PersonIcon /> },
-  { title: 'Мои звонки', path: '/my-calls', icon: <PhoneIcon /> },
-  { title: 'Заявки', path: '/requests', icon: <AssignmentIcon /> },
-  { title: 'Все соискатели', path: '/all-candidates', icon: <PeopleIcon /> },
+  { title: 'Мой кабинет', path: '/my-cabinet', icon: <Home /> },
+  { title: 'Мои соискатели', path: '/my-candidates', icon: <Person /> },
+  { title: 'Мои звонки', path: '/my-calls', icon: <Phone /> },
+  { title: 'Заявки', path: '/requests', icon: <Assignment /> },
+  { title: 'Все соискатели', path: '/all-candidates', icon: <Group /> },
   {
     title: 'Статистика',
     path: '/statistics',
-    icon: <AssessmentIcon />,
+    icon: <Assessment />,
     children: [
-      { title: 'Детализация звонков', path: '/statistics/calls', icon: <PhoneInTalkIcon /> },
-      { title: 'Статистика по рекрутерам', path: '/statistics/recruiters', icon: <BarChartIcon /> },
-    ],
+      { title: 'Общая статистика', path: '/statistics/general', icon: <Assessment /> },
+      { title: 'По рекрутерам', path: '/statistics/recruiters', icon: <People /> },
+    ]
   },
-  { title: 'Табели', path: '/timesheets', icon: <EventNoteIcon /> },
-  { title: 'Пользователи', path: '/users', icon: <GroupIcon /> },
-  { title: 'Проживание', path: '/accommodation', icon: <HomeIcon /> },
-  { title: 'Черный список', path: '/blacklist', icon: <BlockIcon /> },
+  { title: 'Детализация звонков', path: '/call-details', icon: <AccessTime /> },
+  { title: 'Табели', path: '/timesheets', icon: <Assignment /> },
+  { title: 'Пользователи', path: '/users', icon: <People /> },
+  { title: 'Проживание', path: '/accommodation', icon: <Business /> },
+  { title: 'Черный список', path: '/blacklist', icon: <Block /> },
 ];
 
 export default function Sidebar() {
-  const router = useRouter();
-  const pathname = usePathname() || '';
-  const [searchQuery, setSearchQuery] = useState('');
-  const [openStatistics, setOpenStatistics] = useState(false);
+  const [open, setOpen] = useState<string | null>(null);
 
-  const filteredNavItems = navItems.filter(item =>
-    item.title.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const handleNavClick = (path: string) => {
-    router.push(path);
+  const handleClick = (path: string) => {
+    setOpen(open === path ? null : path);
   };
 
-  const handleStatisticsClick = () => {
-    setOpenStatistics(!openStatistics);
+  const renderNavItem = (item: NavItem) => {
+    if (item.children) {
+      return (
+        <Box key={item.path}>
+          <ListItem disablePadding>
+            <ListItemButton onClick={() => handleClick(item.path)}>
+              <ListItemIcon sx={{ color: 'inherit' }}>
+                {item.icon}
+              </ListItemIcon>
+              <ListItemText 
+                primary={item.title}
+                primaryTypographyProps={{
+                  fontSize: '0.95rem',
+                  fontWeight: open === item.path ? 600 : 400
+                }}
+              />
+              {open === item.path ? <ExpandLess /> : <ExpandMore />}
+            </ListItemButton>
+          </ListItem>
+          <Collapse in={open === item.path} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              {item.children.map((child) => (
+                <ListItem key={child.path} disablePadding>
+                  <ListItemButton
+                    component={Link}
+                    href={child.path}
+                    sx={{ pl: 4 }}
+                  >
+                    <ListItemIcon sx={{ color: 'inherit' }}>
+                      {child.icon}
+                    </ListItemIcon>
+                    <ListItemText 
+                      primary={child.title}
+                      primaryTypographyProps={{
+                        fontSize: '0.9rem'
+                      }}
+                    />
+                  </ListItemButton>
+                </ListItem>
+              ))}
+            </List>
+          </Collapse>
+        </Box>
+      );
+    }
+
+    return (
+      <ListItem key={item.path} disablePadding>
+        <ListItemButton
+          component={Link}
+          href={item.path}
+        >
+          <ListItemIcon sx={{ color: 'inherit' }}>
+            {item.icon}
+          </ListItemIcon>
+          <ListItemText 
+            primary={item.title}
+            primaryTypographyProps={{
+              fontSize: '0.95rem'
+            }}
+          />
+        </ListItemButton>
+      </ListItem>
+    );
   };
 
   return (
@@ -88,99 +141,43 @@ export default function Sidebar() {
         '& .MuiDrawer-paper': {
           width: drawerWidth,
           boxSizing: 'border-box',
-          borderRight: '1px solid rgba(163, 174, 208, 0.2)',
-          backgroundColor: 'background.paper',
+          borderRight: '1px solid rgba(0, 0, 0, 0.12)',
+          backgroundColor: '#fff',
         },
       }}
     >
-      <Box sx={{ p: 3 }}>
-        <Typography
-          variant="h5"
-          sx={{
-            fontWeight: 700,
-            color: 'primary.main',
-            mb: 3,
-            textAlign: 'center',
-          }}
-        >
-          RecruiterPRO
+      <Box sx={{ 
+        p: 2, 
+        borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
+        display: 'flex',
+        alignItems: 'center',
+        height: 64
+      }}>
+        <Typography variant="h6" component="div" sx={{ 
+          color: '#1a237e',
+          fontWeight: 600,
+          fontSize: '1.2rem'
+        }}>
+          Stuffix ERP
         </Typography>
-
-        <TextField
-          fullWidth
-          size="small"
-          placeholder="Поиск в меню..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon color="action" />
-              </InputAdornment>
-            ),
-          }}
-          sx={{ mb: 2 }}
-        />
-
-        <List sx={{ width: '100%' }}>
-          {filteredNavItems.map((item) => (
-            item.children ? (
-              <Box key={item.path}>
-                <ListItemButton onClick={handleStatisticsClick}>
-                  <ListItemIcon sx={{ color: 'primary.main' }}>
-                    {item.icon}
-                  </ListItemIcon>
-                  <ListItemText 
-                    primary={item.title}
-                    primaryTypographyProps={{
-                      fontWeight: pathname.startsWith(item.path) ? 600 : 400,
-                    }}
-                  />
-                  {openStatistics ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-                </ListItemButton>
-                <Collapse in={openStatistics} timeout="auto" unmountOnExit>
-                  <List component="div" disablePadding>
-                    {item.children.map((child) => (
-                      <ListItemButton
-                        key={child.path}
-                        onClick={() => handleNavClick(child.path)}
-                        selected={pathname === child.path}
-                        sx={{ pl: 4 }}
-                      >
-                        <ListItemIcon sx={{ color: 'primary.main' }}>
-                          {child.icon}
-                        </ListItemIcon>
-                        <ListItemText 
-                          primary={child.title}
-                          primaryTypographyProps={{
-                            fontWeight: pathname === child.path ? 600 : 400,
-                          }}
-                        />
-                      </ListItemButton>
-                    ))}
-                  </List>
-                </Collapse>
-              </Box>
-            ) : (
-              <ListItemButton
-                key={item.path}
-                onClick={() => handleNavClick(item.path)}
-                selected={pathname === item.path}
-              >
-                <ListItemIcon sx={{ color: 'primary.main' }}>
-                  {item.icon}
-                </ListItemIcon>
-                <ListItemText 
-                  primary={item.title}
-                  primaryTypographyProps={{
-                    fontWeight: pathname === item.path ? 600 : 400,
-                  }}
-                />
-              </ListItemButton>
-            )
-          ))}
-        </List>
       </Box>
+      <List
+        sx={{
+          pt: 2,
+          '& .MuiListItemButton-root': {
+            py: 1.5,
+            '&:hover': {
+              backgroundColor: 'rgba(0, 0, 0, 0.04)',
+            },
+          },
+          '& .MuiListItemIcon-root': {
+            minWidth: 40,
+            color: '#1a237e',
+          },
+        }}
+      >
+        {navItems.map(renderNavItem)}
+      </List>
     </Drawer>
   );
 } 
