@@ -1,5 +1,7 @@
+'use client';
+
 import React, { useState } from 'react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { Alert, Box, Button, Container, TextField, Typography } from '@mui/material';
 
 export default function RegisterPage() {
