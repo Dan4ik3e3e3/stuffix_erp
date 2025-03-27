@@ -1,30 +1,36 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import { NextResponse } from 'next/server';
 import { hash } from 'bcryptjs';
 import connectDB from '@/lib/db';
 import { User } from '@/models/User';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
+export async function POST(request: Request) {
   try {
-    const { email, password, name } = req.body;
+    const body = await request.json();
+    const { email, password, name } = body;
 
     // Проверяем наличие всех необходимых полей
     if (!email || !password || !name) {
-      return res.status(400).json({ error: 'Все поля обязательны для заполнения' });
+      return NextResponse.json(
+        { error: 'Все поля обязательны для заполнения' },
+        { status: 400 }
+      );
     }
 
     // Проверяем формат email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      return res.status(400).json({ error: 'Неверный формат email' });
+      return NextResponse.json(
+        { error: 'Неверный формат email' },
+        { status: 400 }
+      );
     }
 
     // Проверяем длину пароля
     if (password.length < 6) {
-      return res.status(400).json({ error: 'Пароль должен содержать минимум 6 символов' });
+      return NextResponse.json(
+        { error: 'Пароль должен содержать минимум 6 символов' },
+        { status: 400 }
+      );
     }
 
     console.log('Connecting to database...');
@@ -39,7 +45,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Если есть пользователи, запрещаем регистрацию через этот endpoint
     if (usersCount > 0) {
       console.log('Registration blocked: users already exist');
-      return res.status(403).json({ error: 'Регистрация закрыта' });
+      return NextResponse.json(
+        { error: 'Регистрация закрыта' },
+        { status: 403 }
+      );
     }
 
     // Проверяем, не занят ли email
@@ -47,7 +56,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       console.log('Email already taken');
-      return res.status(400).json({ error: 'Email уже зарегистрирован' });
+      return NextResponse.json(
+        { error: 'Email уже зарегистрирован' },
+        { status: 400 }
+      );
     }
 
     // Хешируем пароль
@@ -64,9 +76,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
     console.log('Admin user created successfully:', user._id);
 
-    res.status(201).json({ message: 'Пользователь успешно создан' });
+    return NextResponse.json(
+      { message: 'Пользователь успешно создан' },
+      { status: 201 }
+    );
   } catch (error) {
     console.error('Registration error:', error);
-    res.status(500).json({ error: 'Ошибка при создании пользователя' });
+    return NextResponse.json(
+      { error: 'Ошибка при создании пользователя' },
+      { status: 500 }
+    );
   }
 } 
