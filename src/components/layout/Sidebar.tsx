@@ -11,7 +11,11 @@ import {
   ListItemText,
   Typography,
   TextField,
+  Avatar,
+  Divider,
+  InputAdornment,
 } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
 import HomeIcon from '@mui/icons-material/Home';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import PersonIcon from '@mui/icons-material/Person';
@@ -23,7 +27,7 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import PaymentIcon from '@mui/icons-material/Payment';
 import BusinessIcon from '@mui/icons-material/Business';
 import AssessmentIcon from '@mui/icons-material/Assessment';
-import SettingsIcon from '@mui/icons-material/Settings';
+import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 
 const drawerWidth = 280;
@@ -60,6 +64,7 @@ const navItems: NavItem[] = [
 
 export default function Sidebar() {
   const [searchQuery, setSearchQuery] = useState('');
+  const pathname = usePathname();
 
   const filteredNavItems = navItems.filter(item =>
     item.title.toLowerCase().includes(searchQuery.toLowerCase())
@@ -74,29 +79,41 @@ export default function Sidebar() {
         '& .MuiDrawer-paper': {
           width: drawerWidth,
           boxSizing: 'border-box',
-          borderRight: '1px solid rgba(0, 0, 0, 0.12)',
-          backgroundColor: '#fff',
+          borderRight: '1px solid rgba(255, 255, 255, 0.1)',
+          background: 'linear-gradient(180deg, rgba(26, 35, 126, 0.03) 0%, rgba(26, 35, 126, 0.01) 100%)',
+          backdropFilter: 'blur(20px)',
         },
       }}
     >
       <Box sx={{ 
-        p: 2, 
-        borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
+        p: 3,
         display: 'flex',
         alignItems: 'center',
-        gap: 1,
-        height: 64
+        gap: 2,
+        borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
       }}>
-        <Typography variant="h6" component="div" sx={{ 
-          color: '#1a237e',
-          fontWeight: 600,
-          fontSize: '0.9rem'
-        }}>
-          Егоров Никита
-        </Typography>
-        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          Сергеевич
-        </Typography>
+        <Avatar
+          sx={{
+            width: 40,
+            height: 40,
+            backgroundColor: 'primary.main',
+            fontSize: '1rem',
+          }}
+        >
+          ЕН
+        </Avatar>
+        <Box>
+          <Typography variant="subtitle1" sx={{ 
+            color: '#1a237e',
+            fontWeight: 600,
+            lineHeight: 1.2,
+          }}>
+            Егоров Никита
+          </Typography>
+          <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+            Сергеевич
+          </Typography>
+        </Box>
       </Box>
 
       <Box sx={{ p: 2 }}>
@@ -106,23 +123,37 @@ export default function Sidebar() {
           placeholder="Поиск"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon sx={{ color: 'text.secondary', fontSize: 20 }} />
+              </InputAdornment>
+            ),
+          }}
           sx={{
             '& .MuiOutlinedInput-root': {
-              borderRadius: 1,
+              borderRadius: 2,
+              backgroundColor: 'rgba(255, 255, 255, 0.8)',
+              '&:hover': {
+                backgroundColor: 'rgba(255, 255, 255, 0.95)',
+              },
+              '&.Mui-focused': {
+                backgroundColor: '#fff',
+              }
             }
           }}
         />
       </Box>
 
       <Typography
-        variant="subtitle2"
+        variant="overline"
         sx={{
           px: 2,
-          py: 1,
+          py: 1.5,
           color: 'text.secondary',
-          textTransform: 'uppercase',
           fontSize: '0.75rem',
           fontWeight: 700,
+          letterSpacing: '0.1em',
         }}
       >
         НАВИГАЦИЯ
@@ -130,16 +161,31 @@ export default function Sidebar() {
 
       <List
         sx={{
-          pt: 0,
+          px: 1,
           '& .MuiListItemButton-root': {
+            borderRadius: 1.5,
+            mb: 0.5,
             py: 1,
             '&:hover': {
-              backgroundColor: 'rgba(0, 0, 0, 0.04)',
+              backgroundColor: 'rgba(26, 35, 126, 0.04)',
+            },
+            '&.Mui-selected': {
+              backgroundColor: 'rgba(26, 35, 126, 0.08)',
+              '&:hover': {
+                backgroundColor: 'rgba(26, 35, 126, 0.12)',
+              },
+              '& .MuiListItemIcon-root': {
+                color: 'primary.main',
+              },
+              '& .MuiListItemText-primary': {
+                color: 'primary.main',
+                fontWeight: 600,
+              },
             },
           },
           '& .MuiListItemIcon-root': {
             minWidth: 40,
-            color: '#1a237e',
+            color: 'text.secondary',
           },
         }}
       >
@@ -148,6 +194,7 @@ export default function Sidebar() {
             <ListItemButton
               component={Link}
               href={item.path}
+              selected={pathname === item.path}
             >
               <ListItemIcon>
                 {item.icon}
@@ -161,7 +208,7 @@ export default function Sidebar() {
               {item.badge && (
                 <Box
                   sx={{
-                    backgroundColor: item.badge > 100 ? '#f44336' : '#1a237e',
+                    backgroundColor: item.badge > 100 ? '#f44336' : 'primary.main',
                     color: '#fff',
                     borderRadius: '12px',
                     padding: '0 8px',
