@@ -35,8 +35,10 @@ export const authOptions: AuthOptions = {
           throw new Error("Email и пароль обязательны");
         }
 
+        let clientConnection;
+
         try {
-          await client.connect();
+          clientConnection = await client.connect();
           const db = client.db("stuffix-online");
           const user = await db.collection("users").findOne({ 
             email: credentials.email.toLowerCase()
@@ -56,12 +58,15 @@ export const authOptions: AuthOptions = {
             id: user._id.toString(),
             email: user.email,
             name: user.name,
-            role: user.role as "admin" | "user"
+            role: user.role
           };
-        } catch (error) {
-          throw error;
+        } catch (error: any) {
+          console.error("Auth error:", error);
+          throw new Error(error.message || "Ошибка аутентификации");
         } finally {
-          await client.close();
+          if (clientConnection) {
+            await clientConnection.close();
+          }
         }
       }
     })
@@ -86,7 +91,7 @@ export const authOptions: AuthOptions = {
           id: token.id as string,
           email: token.email as string,
           name: token.name as string,
-          role: token.role as "admin" | "user",
+          role: token.role as string,
         };
       }
       return session;
@@ -97,6 +102,7 @@ export const authOptions: AuthOptions = {
     maxAge: 30 * 24 * 60 * 60, // 30 дней
   },
   secret: process.env.NEXTAUTH_SECRET,
+  debug: process.env.NODE_ENV === "development",
 };
 
 const handler = NextAuth(authOptions);

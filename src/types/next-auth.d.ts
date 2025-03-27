@@ -6,11 +6,14 @@ declare module 'next-auth' {
     id: string;
     email: string;
     name: string;
-    role: 'admin' | 'user';
+    role: string;
   }
 
   interface Session extends DefaultSession {
-    user: User;
+    user: {
+      id: string;
+      role: string;
+    } & DefaultSession["user"]
   }
 
   interface JWT {
