@@ -13,29 +13,47 @@ export const authOptions: AuthOptions = {
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          throw new Error('Пожалуйста, введите email и пароль');
+        try {
+          console.log('Starting authorization process...');
+          
+          if (!credentials?.email || !credentials?.password) {
+            console.log('Missing credentials');
+            throw new Error('Пожалуйста, введите email и пароль');
+          }
+
+          console.log('Connecting to database...');
+          await connectDB();
+          console.log('Database connected');
+
+          console.log('Finding user:', credentials.email);
+          const user = await User.findOne({ email: credentials.email });
+
+          if (!user) {
+            console.log('User not found');
+            throw new Error('Пользователь не найден');
+          }
+          console.log('User found:', user.email);
+
+          console.log('Comparing passwords...');
+          const isValid = await compare(credentials.password, user.password);
+          console.log('Password comparison result:', isValid);
+
+          if (!isValid) {
+            console.log('Invalid password');
+            throw new Error('Неверный пароль');
+          }
+
+          console.log('Authorization successful');
+          return {
+            id: user._id.toString(),
+            email: user.email,
+            name: user.name,
+            role: user.role as 'admin' | 'user',
+          };
+        } catch (error) {
+          console.error('Authorization error:', error);
+          throw error;
         }
-
-        await connectDB();
-        const user = await User.findOne({ email: credentials.email });
-
-        if (!user) {
-          throw new Error('Пользователь не найден');
-        }
-
-        const isValid = await compare(credentials.password, user.password);
-
-        if (!isValid) {
-          throw new Error('Неверный пароль');
-        }
-
-        return {
-          id: user._id.toString(),
-          email: user.email,
-          name: user.name,
-          role: user.role as 'admin' | 'user',
-        };
       }
     })
   ],
