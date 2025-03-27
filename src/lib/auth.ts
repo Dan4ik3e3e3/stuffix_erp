@@ -1,88 +1,25 @@
-import CredentialsProvider from 'next-auth/providers/credentials';
-import type { NextAuthOptions } from 'next-auth';
-import type { User, Session } from 'next-auth';
-
-interface CustomUser extends User {
-  role?: string;
-}
-
-interface CustomSession extends Session {
-  user?: CustomUser;
-}
+import { NextAuthOptions } from 'next-auth';
+import { PrismaAdapter } from '@auth/prisma-adapter';
+import prisma from './prisma';
+import GoogleProvider from 'next-auth/providers/google';
 
 export const authOptions: NextAuthOptions = {
+  adapter: PrismaAdapter(prisma),
   providers: [
-    CredentialsProvider({
-      name: 'Credentials',
-      credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" }
-      },
-      async authorize(credentials) {
-        console.log('Authorize called with credentials:', { email: credentials?.email });
-        
-        if (!credentials?.email || !credentials?.password) {
-          console.log('Missing credentials');
-          throw new Error('Пожалуйста, введите email и пароль');
-        }
-
-        try {
-          // Здесь будет ваша логика проверки пользователя
-          // Пока используем тестовые данные
-          if (credentials.email === 'admin@stuffix.online' && credentials.password === 'admin123') {
-            console.log('Login successful for admin');
-            return {
-              id: '1',
-              email: credentials.email,
-              name: 'Admin',
-              role: 'admin'
-            };
-          }
-          
-          console.log('Invalid credentials');
-          throw new Error('Неверный email или пароль');
-        } catch (error) {
-          console.error('Authorization error:', error);
-          throw error;
-        }
-      }
-    })
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    }),
   ],
-  session: {
-    strategy: 'jwt',
-    maxAge: 30 * 24 * 60 * 60, // 30 days
-  },
   callbacks: {
-    async jwt({ token, user }) {
-      console.log('JWT callback:', { token, user });
-      if (user) {
-        token.role = (user as CustomUser).role;
-      }
-      return token;
-    },
-    async session({ session, token }) {
-      console.log('Session callback:', { session, token });
+    session({ session, user }) {
       if (session.user) {
-        (session.user as CustomUser).role = token.role as string;
+        session.user.id = user.id;
       }
       return session;
-    }
+    },
   },
   pages: {
-    signIn: '/login',
-    error: '/login',
+    signIn: '/auth/signin',
   },
-  secret: process.env.NEXTAUTH_SECRET,
-  debug: process.env.NODE_ENV === 'development',
-  logger: {
-    error(code, metadata) {
-      console.error('NextAuth error:', code, metadata);
-    },
-    warn(code) {
-      console.warn('NextAuth warning:', code);
-    },
-    debug(code, metadata) {
-      console.log('NextAuth debug:', code, metadata);
-    }
-  }
 }; 

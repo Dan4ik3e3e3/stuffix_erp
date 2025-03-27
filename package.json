@@ -7,22 +7,31 @@
     "build": "next build --no-lint",
     "start": "next start",
     "lint": "next lint",
-    "create-admin": "ts-node src/scripts/createAdmin.ts"
+    "create-admin": "ts-node src/scripts/createAdmin.ts",
+    "seed": "ts-node prisma/seed.ts",
+    "prisma:generate": "prisma generate"
   },
   "dependencies": {
+    "@auth/prisma-adapter": "^2.8.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@headlessui/react": "1.7.18",
     "@heroicons/react": "2.1.1",
     "@mui/icons-material": "^7.0.0",
     "@mui/material": "^7.0.0",
+    "@next-auth/prisma-adapter": "^1.0.7",
+    "@prisma/client": "^6.5.0",
+    "@radix-ui/react-slot": "^1.1.2",
     "@types/node": "^20.17.28",
     "@types/react": "^18.3.20",
     "@types/react-dom": "18.2.21",
     "autoprefixer": "10.4.18",
     "bcryptjs": "^3.0.2",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "dotenv": "^16.4.7",
+    "lucide-react": "^0.484.0",
     "mongodb": "^6.15.0",
     "mongoose": "^8.13.0",
     "next": "^14.2.26",
@@ -30,6 +39,8 @@
     "postcss": "8.4.35",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "recharts": "^2.15.1",
+    "tailwind-merge": "^3.0.2",
     "tailwindcss": "3.4.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.2"
@@ -38,6 +49,7 @@
     "@typescript-eslint/eslint-plugin": "^8.28.0",
     "@typescript-eslint/parser": "^8.28.0",
     "eslint": "^8.57.0",
-    "eslint-config-next": "^14.1.0"
+    "eslint-config-next": "^14.1.0",
+    "prisma": "^6.5.0"
   }
 }
