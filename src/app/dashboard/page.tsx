@@ -1,65 +1,49 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import {
+  Box,
+  Container,
+  Grid,
+  Paper,
+  Typography,
+  CircularProgress,
+  IconButton,
+  Drawer,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  AppBar,
+  Toolbar,
+  Avatar,
+} from '@mui/material';
+import {
+  Menu as MenuIcon,
+  Dashboard as DashboardIcon,
+  People as PeopleIcon,
+  Assignment as AssignmentIcon,
+  Settings as SettingsIcon,
+  Notifications as NotificationsIcon,
+  ExitToApp as LogoutIcon,
+} from '@mui/icons-material';
+import { signOut } from 'next-auth/react';
 
-// Компоненты интерфейса
-const Sidebar = () => {
-  const menuItems = [
-    { name: 'Дашборд', icon: '📊', path: '/dashboard' },
-    { name: 'Сотрудники', icon: '👥', path: '/dashboard/employees' },
-    { name: 'Проекты', icon: '📁', path: '/dashboard/projects' },
-    { name: 'Задачи', icon: '✓', path: '/dashboard/tasks' },
-    { name: 'Календарь', icon: '📅', path: '/dashboard/calendar' },
-    { name: 'Отчеты', icon: '📈', path: '/dashboard/reports' },
-    { name: 'Настройки', icon: '⚙️', path: '/dashboard/settings' },
-  ];
+const drawerWidth = 240;
 
-  return (
-    <div className="w-64 bg-gray-800 text-white h-screen fixed left-0 top-0">
-      <div className="p-4">
-        <h1 className="text-2xl font-bold mb-8">Stuffix ERP</h1>
-        <nav>
-          {menuItems.map((item) => (
-            <Link
-              key={item.path}
-              href={item.path}
-              className="flex items-center space-x-2 p-2 hover:bg-gray-700 rounded-lg mb-2"
-            >
-              <span>{item.icon}</span>
-              <span>{item.name}</span>
-            </Link>
-          ))}
-        </nav>
-      </div>
-    </div>
-  );
-};
-
-const Header = () => {
-  return (
-    <header className="bg-white shadow-md fixed top-0 left-64 right-0 h-16 flex items-center justify-between px-6">
-      <div className="flex items-center space-x-4">
-        <h2 className="text-xl font-semibold">Дашборд</h2>
-      </div>
-      <div className="flex items-center space-x-4">
-        <button className="p-2 hover:bg-gray-100 rounded-full">🔔</button>
-        <button className="p-2 hover:bg-gray-100 rounded-full">👤</button>
-      </div>
-    </header>
-  );
-};
-
-export default function Dashboard() {
+export default function DashboardPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const [currentDate] = useState(new Date().toLocaleDateString('ru-RU'));
+  const [mobileOpen, setMobileOpen] = useState(false);
 
-  // Проверяем аутентификацию
   if (status === 'loading') {
-    return <div>Загрузка...</div>;
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <CircularProgress />
+      </Box>
+    );
   }
 
   if (status === 'unauthenticated') {
@@ -67,76 +51,183 @@ export default function Dashboard() {
     return null;
   }
 
-  const metrics = [
-    { title: 'Активные проекты', value: '12', change: '+2' },
-    { title: 'Сотрудники', value: '48', change: '+5' },
-    { title: 'Задачи на сегодня', value: '23', change: '-3' },
-    { title: 'Выполнено в этом месяце', value: '156', change: '+12' },
-  ];
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
 
-  const recentActivities = [
-    { text: 'Новый проект создан: "Разработка CRM"', time: '2 часа назад' },
-    { text: 'Задача завершена: "Дизайн главной страницы"', time: '4 часа назад' },
-    { text: 'Добавлен новый сотрудник: Иван Петров', time: '6 часов назад' },
-  ];
-
-  const upcomingEvents = [
-    { title: 'Встреча команды', date: '15:00 сегодня' },
-    { title: 'Дедлайн проекта UI/UX', date: 'Завтра' },
-    { title: 'Ревью кода', date: '16 марта' },
-  ];
+  const drawer = (
+    <Box sx={{ mt: 2 }}>
+      <List>
+        <ListItem button selected>
+          <ListItemIcon>
+            <DashboardIcon />
+          </ListItemIcon>
+          <ListItemText primary="Дашборд" />
+        </ListItem>
+        <ListItem button>
+          <ListItemIcon>
+            <PeopleIcon />
+          </ListItemIcon>
+          <ListItemText primary="Сотрудники" />
+        </ListItem>
+        <ListItem button>
+          <ListItemIcon>
+            <AssignmentIcon />
+          </ListItemIcon>
+          <ListItemText primary="Задачи" />
+        </ListItem>
+        <ListItem button>
+          <ListItemIcon>
+            <SettingsIcon />
+          </ListItemIcon>
+          <ListItemText primary="Настройки" />
+        </ListItem>
+      </List>
+    </Box>
+  );
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <Sidebar />
-      <Header />
-      
-      <main className="ml-64 pt-16 p-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Дашборд</h1>
-          <p className="text-gray-600">{currentDate}</p>
-        </div>
+    <Box sx={{ display: 'flex' }}>
+      <AppBar
+        position="fixed"
+        sx={{
+          width: { sm: `calc(100% - ${drawerWidth}px)` },
+          ml: { sm: `${drawerWidth}px` },
+          backgroundColor: '#1e3c72',
+        }}
+      >
+        <Toolbar>
+          <IconButton
+            color="inherit"
+            edge="start"
+            onClick={handleDrawerToggle}
+            sx={{ mr: 2, display: { sm: 'none' } }}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
+            Stuffix ERP
+          </Typography>
+          <IconButton color="inherit">
+            <NotificationsIcon />
+          </IconButton>
+          <IconButton color="inherit" onClick={() => signOut()}>
+            <LogoutIcon />
+          </IconButton>
+          <Avatar sx={{ ml: 1 }}>{session?.user?.name?.[0] || 'U'}</Avatar>
+        </Toolbar>
+      </AppBar>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {metrics.map((metric, index) => (
-            <div key={index} className="bg-white p-6 rounded-lg shadow-md">
-              <h3 className="text-gray-600 mb-2">{metric.title}</h3>
-              <div className="flex items-center justify-between">
-                <span className="text-2xl font-bold">{metric.value}</span>
-                <span className={`text-sm ${metric.change.startsWith('+') ? 'text-green-500' : 'text-red-500'}`}>
-                  {metric.change}
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
+      <Box
+        component="nav"
+        sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+      >
+        <Drawer
+          variant="temporary"
+          open={mobileOpen}
+          onClose={handleDrawerToggle}
+          ModalProps={{
+            keepMounted: true,
+          }}
+          sx={{
+            display: { xs: 'block', sm: 'none' },
+            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+          }}
+        >
+          {drawer}
+        </Drawer>
+        <Drawer
+          variant="permanent"
+          sx={{
+            display: { xs: 'none', sm: 'block' },
+            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+          }}
+          open
+        >
+          {drawer}
+        </Drawer>
+      </Box>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h2 className="text-xl font-bold mb-4">Последние активности</h2>
-            <div className="space-y-4">
-              {recentActivities.map((activity, index) => (
-                <div key={index} className="flex justify-between items-center">
-                  <p>{activity.text}</p>
-                  <span className="text-sm text-gray-500">{activity.time}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h2 className="text-xl font-bold mb-4">Предстоящие события</h2>
-            <div className="space-y-4">
-              {upcomingEvents.map((event, index) => (
-                <div key={index} className="flex justify-between items-center">
-                  <p>{event.title}</p>
-                  <span className="text-sm text-gray-500">{event.date}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </main>
-    </div>
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          p: 3,
+          width: { sm: `calc(100% - ${drawerWidth}px)` },
+          mt: 8,
+        }}
+      >
+        <Grid container spacing={3}>
+          <Grid item xs={12} md={6} lg={3}>
+            <Paper
+              sx={{
+                p: 2,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+              }}
+            >
+              <Typography variant="h3" component="div" color="primary">
+                12
+              </Typography>
+              <Typography variant="subtitle1" color="text.secondary">
+                Активных проектов
+              </Typography>
+            </Paper>
+          </Grid>
+          <Grid item xs={12} md={6} lg={3}>
+            <Paper
+              sx={{
+                p: 2,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+              }}
+            >
+              <Typography variant="h3" component="div" color="primary">
+                48
+              </Typography>
+              <Typography variant="subtitle1" color="text.secondary">
+                Сотрудников
+              </Typography>
+            </Paper>
+          </Grid>
+          <Grid item xs={12} md={6} lg={3}>
+            <Paper
+              sx={{
+                p: 2,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+              }}
+            >
+              <Typography variant="h3" component="div" color="primary">
+                156
+              </Typography>
+              <Typography variant="subtitle1" color="text.secondary">
+                Задач в работе
+              </Typography>
+            </Paper>
+          </Grid>
+          <Grid item xs={12} md={6} lg={3}>
+            <Paper
+              sx={{
+                p: 2,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+              }}
+            >
+              <Typography variant="h3" component="div" color="primary">
+                89%
+              </Typography>
+              <Typography variant="subtitle1" color="text.secondary">
+                Выполнено в срок
+              </Typography>
+            </Paper>
+          </Grid>
+        </Grid>
+      </Box>
+    </Box>
   );
 } 
