@@ -7,7 +7,12 @@ interface CustomUser extends User {
 }
 
 interface CustomSession extends Session {
-  user?: CustomUser;
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    role?: string;
+  }
 }
 
 export const authOptions: NextAuthOptions = {
