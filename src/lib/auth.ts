@@ -1,7 +1,8 @@
 import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import connectToDatabase from '@/lib/db';
+import connectDB from '@/lib/db';
 import { compare } from 'bcryptjs';
+import { User } from '@/models/User';
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -16,8 +17,8 @@ export const authOptions: NextAuthOptions = {
           throw new Error('Введите email и пароль');
         }
 
-        const { db } = await connectToDatabase();
-        const user = await db.collection('users').findOne({ email: credentials.email });
+        await connectDB();
+        const user = await User.findOne({ email: credentials.email });
 
         if (!user) {
           throw new Error('Пользователь не найден');
@@ -44,15 +45,15 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id;
-        token.role = user.role;
+        token.id = user.id as string;
+        token.role = user.role as 'admin' | 'user';
       }
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
-        session.user.id = token.id;
-        session.user.role = token.role;
+        session.user.id = token.id as string;
+        session.user.role = token.role as 'admin' | 'user';
       }
       return session;
     },

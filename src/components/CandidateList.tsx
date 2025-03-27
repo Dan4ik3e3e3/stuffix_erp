@@ -24,27 +24,17 @@ interface CandidateListProps {
   candidates: ICandidate[];
   onEdit: (candidate: ICandidate) => void;
   onDelete: (id: string) => void;
-  onAdd: (candidate: Partial<ICandidate>) => void;
+  onAdd: () => void;
 }
 
 export default function CandidateList({ candidates, onEdit, onDelete, onAdd }: CandidateListProps) {
   const [searchTerm, setSearchTerm] = useState('');
-  const [isAddFormOpen, setIsAddFormOpen] = useState(false);
 
   const filteredCandidates = candidates.filter((candidate) =>
     Object.values(candidate).some((value) =>
       String(value).toLowerCase().includes(searchTerm.toLowerCase())
     )
   );
-
-  const handleAddClick = () => {
-    setIsAddFormOpen(true);
-  };
-
-  const handleAddSubmit = (data: Partial<ICandidate>) => {
-    onAdd(data);
-    setIsAddFormOpen(false);
-  };
 
   return (
     <Box>
@@ -64,7 +54,7 @@ export default function CandidateList({ candidates, onEdit, onDelete, onAdd }: C
         <Button
           variant="contained"
           startIcon={<AddIcon />}
-          onClick={handleAddClick}
+          onClick={onAdd}
         >
           Добавить кандидата
         </Button>
@@ -115,12 +105,6 @@ export default function CandidateList({ candidates, onEdit, onDelete, onAdd }: C
           </TableBody>
         </Table>
       </TableContainer>
-
-      <CandidateForm
-        open={isAddFormOpen}
-        onClose={() => setIsAddFormOpen(false)}
-        onSubmit={handleAddSubmit}
-      />
     </Box>
   );
 } 

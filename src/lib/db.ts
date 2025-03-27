@@ -1,19 +1,24 @@
-import { MongoClient } from 'mongodb';
+import mongoose from 'mongoose';
 
 if (!process.env.MONGODB_URI) {
   throw new Error('Please define the MONGODB_URI environment variable inside .env');
 }
 
 const MONGODB_URI: string = process.env.MONGODB_URI;
-let client: MongoClient | null = null;
 
-export async function connectToDatabase() {
-  if (client) {
-    return { db: client.db() };
+async function connectDB() {
+  try {
+    if (mongoose.connection.readyState === 1) {
+      return mongoose.connection;
+    }
+
+    await mongoose.connect(MONGODB_URI);
+    console.log('MongoDB connected successfully');
+    return mongoose.connection;
+  } catch (error) {
+    console.error('MongoDB connection error:', error);
+    throw error;
   }
-
-  client = await MongoClient.connect(MONGODB_URI);
-  return { db: client.db() };
 }
 
-export default connectToDatabase; 
+export default connectDB; 

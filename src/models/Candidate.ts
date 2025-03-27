@@ -63,6 +63,7 @@ const candidateSchema = new mongoose.Schema<ICandidate>(
       },
       currency: {
         type: String,
+        enum: ['RUB', 'USD', 'EUR'],
         default: 'RUB',
       },
     },
@@ -77,8 +78,7 @@ const candidateSchema = new mongoose.Schema<ICandidate>(
       type: String,
     },
     createdBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
+      type: String,
       required: true,
     },
   },

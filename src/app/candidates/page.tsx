@@ -5,6 +5,7 @@ import { Box, Container, Typography } from '@mui/material';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import CandidateList from '@/components/CandidateList';
+import CandidateForm from '@/components/CandidateForm';
 import Layout from '@/components/Layout';
 import { ICandidate } from '@/models/Candidate';
 
@@ -14,6 +15,8 @@ export default function CandidatesPage() {
   const [candidates, setCandidates] = useState<ICandidate[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [formOpen, setFormOpen] = useState(false);
+  const [editingCandidate, setEditingCandidate] = useState<ICandidate | null>(null);
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -44,27 +47,8 @@ export default function CandidatesPage() {
   };
 
   const handleEdit = async (candidate: ICandidate) => {
-    try {
-      const response = await fetch('/api/candidates', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(candidate),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to update candidate');
-      }
-
-      const updatedCandidate = await response.json();
-      setCandidates(prev =>
-        prev.map(c => c._id === updatedCandidate._id ? updatedCandidate : c)
-      );
-    } catch (err) {
-      console.error('Error updating candidate:', err);
-      setError('Ошибка при обновлении кандидата');
-    }
+    setEditingCandidate(candidate);
+    setFormOpen(true);
   };
 
   const handleDelete = async (id: string) => {
@@ -84,25 +68,44 @@ export default function CandidatesPage() {
     }
   };
 
-  const handleAdd = async (candidate: Partial<ICandidate>) => {
+  const handleAdd = () => {
+    setEditingCandidate(null);
+    setFormOpen(true);
+  };
+
+  const handleSubmit = async (data: Partial<ICandidate>) => {
     try {
-      const response = await fetch('/api/candidates', {
-        method: 'POST',
+      const url = editingCandidate
+        ? `/api/candidates?id=${editingCandidate._id}`
+        : '/api/candidates';
+
+      const response = await fetch(url, {
+        method: editingCandidate ? 'PUT' : 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(candidate),
+        body: JSON.stringify(data),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to add candidate');
+        throw new Error(editingCandidate ? 'Failed to update candidate' : 'Failed to add candidate');
       }
 
-      const newCandidate = await response.json();
-      setCandidates(prev => [...prev, newCandidate]);
+      const result = await response.json();
+      
+      if (editingCandidate) {
+        setCandidates(prev =>
+          prev.map(c => c._id === editingCandidate._id ? result : c)
+        );
+      } else {
+        setCandidates(prev => [...prev, result]);
+      }
+      
+      setFormOpen(false);
+      setEditingCandidate(null);
     } catch (err) {
-      console.error('Error adding candidate:', err);
-      setError('Ошибка при добавлении кандидата');
+      console.error('Error saving candidate:', err);
+      setError(editingCandidate ? 'Ошибка при обновлении кандидата' : 'Ошибка при добавлении кандидата');
     }
   };
 
@@ -142,6 +145,15 @@ export default function CandidatesPage() {
             onEdit={handleEdit}
             onDelete={handleDelete}
             onAdd={handleAdd}
+          />
+          <CandidateForm
+            open={formOpen}
+            onClose={() => {
+              setFormOpen(false);
+              setEditingCandidate(null);
+            }}
+            onSubmit={handleSubmit}
+            candidate={editingCandidate || undefined}
           />
         </Box>
       </Container>

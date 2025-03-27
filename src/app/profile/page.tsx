@@ -36,37 +36,29 @@ export default function ProfilePage() {
             Профиль
           </Typography>
           <Paper sx={{ p: 3, mt: 3 }}>
-            <Grid container spacing={3}>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="Имя"
-                  value={session?.user?.name || ''}
-                  disabled
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="Email"
-                  value={session?.user?.email || ''}
-                  disabled
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="Роль"
-                  value={session?.user?.role || ''}
-                  disabled
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <Button variant="contained" color="primary">
-                  Изменить пароль
-                </Button>
-              </Grid>
-            </Grid>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+              <TextField
+                fullWidth
+                label="Имя"
+                value={session?.user?.name || ''}
+                disabled
+              />
+              <TextField
+                fullWidth
+                label="Email"
+                value={session?.user?.email || ''}
+                disabled
+              />
+              <TextField
+                fullWidth
+                label="Роль"
+                value={session?.user?.role || ''}
+                disabled
+              />
+              <Button variant="contained" color="primary">
+                Изменить пароль
+              </Button>
+            </Box>
           </Paper>
         </Box>
       </Container>

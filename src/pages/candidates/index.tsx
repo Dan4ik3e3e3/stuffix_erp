@@ -15,29 +15,27 @@ interface CandidatesPageProps {
 export default function CandidatesPage({ initialCandidates }: CandidatesPageProps) {
   const [candidates, setCandidates] = React.useState<ICandidate[]>(initialCandidates);
   const [formOpen, setFormOpen] = React.useState(false);
-  const [editingCandidate, setEditingCandidate] = React.useState<ICandidate | undefined>();
+  const [editingCandidate, setEditingCandidate] = React.useState<ICandidate | null>(null);
+  const [drawerOpen, setDrawerOpen] = React.useState(false);
 
   const handleAdd = () => {
-    setEditingCandidate(undefined);
+    setEditingCandidate(null);
     setFormOpen(true);
   };
 
-  const handleEdit = async (id: string) => {
-    const candidate = candidates.find((c) => c._id?.toString() === id);
-    if (candidate) {
-      setEditingCandidate(candidate);
-      setFormOpen(true);
-    }
+  const handleEdit = (candidate: ICandidate) => {
+    setEditingCandidate(candidate);
+    setFormOpen(true);
   };
 
   const handleDelete = async (id: string) => {
     try {
-      const response = await fetch(`/api/candidates/${id}`, {
+      const response = await fetch(`/api/candidates?id=${id}`, {
         method: 'DELETE',
       });
 
       if (response.ok) {
-        setCandidates((prev) => prev.filter((c) => c._id?.toString() !== id));
+        setCandidates((prev) => prev.filter((c) => c._id !== id));
       }
     } catch (error) {
       console.error('Error deleting candidate:', error);
@@ -47,7 +45,7 @@ export default function CandidatesPage({ initialCandidates }: CandidatesPageProp
   const handleSubmit = async (data: Partial<ICandidate>) => {
     try {
       const url = editingCandidate
-        ? `/api/candidates/${editingCandidate._id}`
+        ? `/api/candidates?id=${editingCandidate._id}`
         : '/api/candidates';
       
       const response = await fetch(url, {
@@ -64,7 +62,7 @@ export default function CandidatesPage({ initialCandidates }: CandidatesPageProp
         if (editingCandidate) {
           setCandidates((prev) =>
             prev.map((c) =>
-              c._id === editingCandidate._id ? result : c
+              c._id === editingCandidate._id ? { ...result } : c
             )
           );
         } else {
@@ -72,7 +70,7 @@ export default function CandidatesPage({ initialCandidates }: CandidatesPageProp
         }
         
         setFormOpen(false);
-        setEditingCandidate(undefined);
+        setEditingCandidate(null);
       }
     } catch (error) {
       console.error('Error saving candidate:', error);
@@ -81,8 +79,11 @@ export default function CandidatesPage({ initialCandidates }: CandidatesPageProp
 
   return (
     <Box sx={{ display: 'flex' }}>
-      <Navigation />
-      <Box component="main" sx={{ flexGrow: 1 }}>
+      <Navigation 
+        open={drawerOpen} 
+        onClose={() => setDrawerOpen(false)} 
+      />
+      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <CandidateList
           candidates={candidates}
           onAdd={handleAdd}
@@ -93,10 +94,10 @@ export default function CandidatesPage({ initialCandidates }: CandidatesPageProp
           open={formOpen}
           onClose={() => {
             setFormOpen(false);
-            setEditingCandidate(undefined);
+            setEditingCandidate(null);
           }}
           onSubmit={handleSubmit}
-          candidate={editingCandidate}
+          candidate={editingCandidate || undefined}
         />
       </Box>
     </Box>
