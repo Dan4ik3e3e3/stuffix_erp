@@ -1,25 +1,14 @@
-'use client';
-
+import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Sidebar from "@/components/layout/Sidebar";
-import Header from "@/components/layout/Header";
-import { SessionProvider } from "@/components/providers/SessionProvider";
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
+import ClientLayout from "@/components/layout/ClientLayout";
 
 const inter = Inter({ subsets: ["latin", "cyrillic"] });
 
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#1e3c72',
-    },
-  },
-  typography: {
-    fontFamily: inter.style.fontFamily,
-  },
-});
+export const metadata: Metadata = {
+  title: "Stuffix ERP",
+  description: "Эффективное управление персоналом и ресурсами предприятия",
+};
 
 export default function RootLayout({
   children,
@@ -29,12 +18,7 @@ export default function RootLayout({
   return (
     <html lang="ru">
       <body className={inter.className}>
-        <SessionProvider>
-          <ThemeProvider theme={theme}>
-            <CssBaseline />
-            {children}
-          </ThemeProvider>
-        </SessionProvider>
+        <ClientLayout>{children}</ClientLayout>
       </body>
     </html>
   );
