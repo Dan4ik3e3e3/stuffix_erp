@@ -1,6 +1,6 @@
 'use client';
 
-import { Container, Typography, Paper, Grid } from '@mui/material';
+import { Container, Typography, Paper, Box } from '@mui/material';
 
 export default function DashboardPage() {
   return (
@@ -9,18 +9,20 @@ export default function DashboardPage() {
         Панель управления
       </Typography>
       
-      <Grid container spacing={3}>
-        <Grid item xs={12}>
-          <Paper sx={{ p: 2 }}>
-            <Typography variant="h6" component="h2">
-              Добро пожаловать в Stuffix ERP
-            </Typography>
-            <Typography>
-              Здесь будет располагаться основной контент панели управления.
-            </Typography>
-          </Paper>
-        </Grid>
-      </Grid>
+      <Box sx={{ 
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 3
+      }}>
+        <Paper sx={{ p: 2 }}>
+          <Typography variant="h6" component="h2">
+            Добро пожаловать в Stuffix ERP
+          </Typography>
+          <Typography>
+            Здесь будет располагаться основной контент панели управления.
+          </Typography>
+        </Paper>
+      </Box>
     </Container>
   );
 } 
