@@ -6,6 +6,10 @@ import { Container, Paper, Button, Typography } from '@mui/material';
 export default function LoginPage() {
   const router = useRouter();
 
+  const handleLogin = () => {
+    router.replace('/dashboard');
+  };
+
   return (
     <Container component="main" maxWidth="xs" sx={{ 
       minHeight: '100vh',
@@ -27,7 +31,7 @@ export default function LoginPage() {
         </Typography>
 
         <Button
-          onClick={() => router.push('/dashboard')}
+          onClick={handleLogin}
           fullWidth
           variant="contained"
           sx={{ 
