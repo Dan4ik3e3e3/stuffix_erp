@@ -9,38 +9,36 @@ import {
   Drawer,
   List,
   ListItem,
+  ListItemButton,
   ListItemIcon,
   ListItemText,
   useTheme,
+  Divider,
 } from '@mui/material';
-import {
-  Menu as MenuIcon,
-  People as PeopleIcon,
-  Person as PersonIcon,
-  Settings as SettingsIcon,
-  ExitToApp as LogoutIcon,
-} from '@mui/icons-material';
-import { useRouter } from 'next/router';
+import MenuIcon from '@mui/icons-material/Menu';
+import PeopleIcon from '@mui/icons-material/People';
+import PersonIcon from '@mui/icons-material/Person';
+import SettingsIcon from '@mui/icons-material/Settings';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import { useRouter } from 'next/navigation';
 import { signOut } from 'next-auth/react';
 
-export default function Navigation() {
-  const [drawerOpen, setDrawerOpen] = React.useState(false);
-  const router = useRouter();
-  const theme = useTheme();
+interface NavigationProps {
+  open: boolean;
+  onClose: () => void;
+}
 
-  const menuItems = [
-    { text: 'Кандидаты', icon: <PeopleIcon />, path: '/candidates' },
-    { text: 'Пользователи', icon: <PersonIcon />, path: '/users' },
-    { text: 'Настройки', icon: <SettingsIcon />, path: '/settings' },
-  ];
+export default function Navigation({ open, onClose }: NavigationProps) {
+  const theme = useTheme();
+  const router = useRouter();
 
   const handleNavigation = (path: string) => {
     router.push(path);
-    setDrawerOpen(false);
+    onClose();
   };
 
-  const handleLogout = async () => {
-    await signOut({ redirect: true, callbackUrl: '/auth/signin' });
+  const handleSignOut = () => {
+    signOut({ callbackUrl: '/auth/login' });
   };
 
   return (
@@ -50,7 +48,7 @@ export default function Navigation() {
           <IconButton
             color="inherit"
             edge="start"
-            onClick={() => setDrawerOpen(true)}
+            onClick={onClose}
             sx={{ mr: 2 }}
           >
             <MenuIcon />
@@ -58,28 +56,49 @@ export default function Navigation() {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Stuffix ERP
           </Typography>
-          <Button color="inherit" onClick={handleLogout}>
+          <Button color="inherit" onClick={handleSignOut}>
             Выйти
           </Button>
         </Toolbar>
       </AppBar>
-      <Drawer anchor="left" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
-        <Box
-          sx={{ width: 250 }}
-          role="presentation"
-        >
+      <Drawer anchor="left" open={open} onClose={onClose}>
+        <Box sx={{ width: 250 }}>
           <List>
-            {menuItems.map((item) => (
-              <ListItem 
-                button 
-                key={item.text}
-                onClick={() => handleNavigation(item.path)}
-                selected={router.pathname === item.path}
-              >
-                <ListItemIcon>{item.icon}</ListItemIcon>
-                <ListItemText primary={item.text} />
-              </ListItem>
-            ))}
+            <ListItem disablePadding>
+              <ListItemButton onClick={() => handleNavigation('/candidates')}>
+                <ListItemIcon>
+                  <PeopleIcon />
+                </ListItemIcon>
+                <ListItemText primary="Кандидаты" />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemButton onClick={() => handleNavigation('/profile')}>
+                <ListItemIcon>
+                  <PersonIcon />
+                </ListItemIcon>
+                <ListItemText primary="Профиль" />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemButton onClick={() => handleNavigation('/settings')}>
+                <ListItemIcon>
+                  <SettingsIcon />
+                </ListItemIcon>
+                <ListItemText primary="Настройки" />
+              </ListItemButton>
+            </ListItem>
+          </List>
+          <Divider />
+          <List>
+            <ListItem disablePadding>
+              <ListItemButton onClick={handleSignOut}>
+                <ListItemIcon>
+                  <ExitToAppIcon />
+                </ListItemIcon>
+                <ListItemText primary="Выйти" />
+              </ListItemButton>
+            </ListItem>
           </List>
         </Box>
       </Drawer>

@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 
 export interface ICandidate {
+  _id: string;
   fullName: string;
   email: string;
   phone: string;
@@ -11,12 +12,12 @@ export interface ICandidate {
   salary: {
     min: number;
     max: number;
-    currency: string;
+    currency: 'RUB' | 'USD' | 'EUR';
   };
   location: string;
-  resume: string;
-  notes: string;
-  createdBy: mongoose.Types.ObjectId;
+  resume?: string;
+  notes?: string;
+  createdBy: string;
   createdAt: Date;
   updatedAt: Date;
 }

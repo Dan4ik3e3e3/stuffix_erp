@@ -6,10 +6,9 @@ import {
   DialogActions,
   Button,
   TextField,
-  Grid,
+  Box,
   MenuItem,
   Autocomplete,
-  Box,
 } from '@mui/material';
 import { ICandidate } from '@/models/Candidate';
 
@@ -55,7 +54,7 @@ export default function CandidateForm({ open, onClose, onSubmit, candidate }: Ca
       setFormData((prev) => ({
         ...prev,
         [parent]: {
-          ...prev[parent as keyof ICandidate],
+          ...(prev[parent as keyof ICandidate] as any),
           [child]: value,
         },
       }));
@@ -79,8 +78,8 @@ export default function CandidateForm({ open, onClose, onSubmit, candidate }: Ca
           {candidate ? 'Редактировать кандидата' : 'Добавить кандидата'}
         </DialogTitle>
         <DialogContent>
-          <Grid container spacing={2} sx={{ mt: 1 }}>
-            <Grid item xs={12}>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mt: 1 }}>
+            <Box sx={{ width: '100%' }}>
               <TextField
                 fullWidth
                 label="ФИО"
@@ -88,8 +87,8 @@ export default function CandidateForm({ open, onClose, onSubmit, candidate }: Ca
                 onChange={(e) => handleChange('fullName', e.target.value)}
                 required
               />
-            </Grid>
-            <Grid item xs={6}>
+            </Box>
+            <Box sx={{ width: 'calc(50% - 8px)' }}>
               <TextField
                 fullWidth
                 label="Email"
@@ -98,8 +97,8 @@ export default function CandidateForm({ open, onClose, onSubmit, candidate }: Ca
                 onChange={(e) => handleChange('email', e.target.value)}
                 required
               />
-            </Grid>
-            <Grid item xs={6}>
+            </Box>
+            <Box sx={{ width: 'calc(50% - 8px)' }}>
               <TextField
                 fullWidth
                 label="Телефон"
@@ -107,8 +106,8 @@ export default function CandidateForm({ open, onClose, onSubmit, candidate }: Ca
                 onChange={(e) => handleChange('phone', e.target.value)}
                 required
               />
-            </Grid>
-            <Grid item xs={12}>
+            </Box>
+            <Box sx={{ width: '100%' }}>
               <TextField
                 fullWidth
                 label="Должность"
@@ -116,8 +115,8 @@ export default function CandidateForm({ open, onClose, onSubmit, candidate }: Ca
                 onChange={(e) => handleChange('position', e.target.value)}
                 required
               />
-            </Grid>
-            <Grid item xs={12}>
+            </Box>
+            <Box sx={{ width: '100%' }}>
               <Autocomplete
                 multiple
                 freeSolo
@@ -132,8 +131,8 @@ export default function CandidateForm({ open, onClose, onSubmit, candidate }: Ca
                   />
                 )}
               />
-            </Grid>
-            <Grid item xs={6}>
+            </Box>
+            <Box sx={{ width: 'calc(50% - 8px)' }}>
               <TextField
                 fullWidth
                 label="Опыт (лет)"
@@ -142,8 +141,8 @@ export default function CandidateForm({ open, onClose, onSubmit, candidate }: Ca
                 onChange={(e) => handleChange('experience', Number(e.target.value))}
                 required
               />
-            </Grid>
-            <Grid item xs={6}>
+            </Box>
+            <Box sx={{ width: 'calc(50% - 8px)' }}>
               <TextField
                 select
                 fullWidth
@@ -158,8 +157,8 @@ export default function CandidateForm({ open, onClose, onSubmit, candidate }: Ca
                   </MenuItem>
                 ))}
               </TextField>
-            </Grid>
-            <Grid item xs={4}>
+            </Box>
+            <Box sx={{ width: 'calc(33.33% - 11px)' }}>
               <TextField
                 fullWidth
                 label="Зарплата (от)"
@@ -168,8 +167,8 @@ export default function CandidateForm({ open, onClose, onSubmit, candidate }: Ca
                 onChange={(e) => handleChange('salary.min', Number(e.target.value))}
                 required
               />
-            </Grid>
-            <Grid item xs={4}>
+            </Box>
+            <Box sx={{ width: 'calc(33.33% - 11px)' }}>
               <TextField
                 fullWidth
                 label="Зарплата (до)"
@@ -178,8 +177,8 @@ export default function CandidateForm({ open, onClose, onSubmit, candidate }: Ca
                 onChange={(e) => handleChange('salary.max', Number(e.target.value))}
                 required
               />
-            </Grid>
-            <Grid item xs={4}>
+            </Box>
+            <Box sx={{ width: 'calc(33.33% - 11px)' }}>
               <TextField
                 select
                 fullWidth
@@ -192,8 +191,8 @@ export default function CandidateForm({ open, onClose, onSubmit, candidate }: Ca
                 <MenuItem value="USD">USD</MenuItem>
                 <MenuItem value="EUR">EUR</MenuItem>
               </TextField>
-            </Grid>
-            <Grid item xs={12}>
+            </Box>
+            <Box sx={{ width: '100%' }}>
               <TextField
                 fullWidth
                 label="Местоположение"
@@ -201,8 +200,8 @@ export default function CandidateForm({ open, onClose, onSubmit, candidate }: Ca
                 onChange={(e) => handleChange('location', e.target.value)}
                 required
               />
-            </Grid>
-            <Grid item xs={12}>
+            </Box>
+            <Box sx={{ width: '100%' }}>
               <TextField
                 fullWidth
                 label="Заметки"
@@ -211,8 +210,8 @@ export default function CandidateForm({ open, onClose, onSubmit, candidate }: Ca
                 value={formData.notes}
                 onChange={(e) => handleChange('notes', e.target.value)}
               />
-            </Grid>
-          </Grid>
+            </Box>
+          </Box>
         </DialogContent>
         <DialogActions>
           <Button onClick={onClose}>Отмена</Button>
