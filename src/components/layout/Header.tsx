@@ -19,7 +19,6 @@ import SearchIcon from '@mui/icons-material/Search';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { format } from 'date-fns';
-import { ru } from 'date-fns/locale';
 
 export default function Header() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -38,6 +37,8 @@ export default function Header() {
     setAnchorEl(null);
     setNotificationsAnchor(null);
   };
+
+  const currentDate = format(new Date(), 'dd.MM.yyyy');
 
   return (
     <AppBar 
@@ -59,7 +60,7 @@ export default function Header() {
             gap: 0.5,
           }}
         >
-          {format(new Date(), 'd MMMM yyyy, EEEE', { locale: ru })}
+          {currentDate}
         </Typography>
 
         <Box sx={{ flexGrow: 1 }}>
