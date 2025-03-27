@@ -16,17 +16,17 @@ setInterval(() => {
 }, 5 * 60 * 1000)
 
 export default withAuth(
-  function middleware(req) {
-    // Если пользователь пытается получить доступ к корневому маршруту и уже аутентифицирован,
+  function middleware(req: NextRequest) {
+    // Если пользователь авторизован и пытается получить доступ к странице входа,
     // перенаправляем его на дашборд
-    if (req.nextUrl.pathname === '/' && req.nextauth.token) {
-      return NextResponse.redirect(new URL('/dashboard', req.url));
+    if (req.nextUrl.pathname === "/") {
+      return NextResponse.redirect(new URL("/dashboard", req.url));
     }
     return NextResponse.next();
   },
   {
     callbacks: {
-      authorized: ({ token }) => !!token,
+      authorized: ({ token }) => !!token
     },
   }
 )
@@ -86,7 +86,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    '/((?!api|_next/static|_next/image|favicon.ico).*)',
-  ],
-} 
+  matcher: ['/', '/dashboard/:path*']
+}; 
