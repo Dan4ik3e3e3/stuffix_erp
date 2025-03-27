@@ -15,11 +15,21 @@ setInterval(() => {
   }
 }, 5 * 60 * 1000)
 
-export default withAuth({
-  callbacks: {
-    authorized: ({ token }) => !!token
+export default withAuth(
+  function middleware(req) {
+    // Если пользователь пытается получить доступ к корневому маршруту и уже аутентифицирован,
+    // перенаправляем его на дашборд
+    if (req.nextUrl.pathname === '/' && req.nextauth.token) {
+      return NextResponse.redirect(new URL('/dashboard', req.url));
+    }
+    return NextResponse.next();
   },
-})
+  {
+    callbacks: {
+      authorized: ({ token }) => !!token,
+    },
+  }
+)
 
 export function middleware(request: NextRequest) {
   const response = NextResponse.next()

@@ -1,142 +1,116 @@
 'use client';
 
-import { useState } from 'react';
-import Link from 'next/link';
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
+import { Alert, Box, Button, Container, TextField, Typography, Paper } from '@mui/material';
 
-// Компоненты интерфейса
-const Sidebar = () => {
-  const menuItems = [
-    { name: 'Дашборд', icon: '📊', path: '/' },
-    { name: 'Сотрудники', icon: '👥', path: '/employees' },
-    { name: 'Проекты', icon: '📁', path: '/projects' },
-    { name: 'Задачи', icon: '✓', path: '/tasks' },
-    { name: 'Календарь', icon: '📅', path: '/calendar' },
-    { name: 'Отчеты', icon: '📈', path: '/reports' },
-    { name: 'Настройки', icon: '⚙️', path: '/settings' },
-  ];
+export default function LoginPage() {
+  const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  return (
-    <div className="w-64 bg-gray-800 text-white h-screen fixed left-0 top-0">
-      <div className="p-4">
-        <h1 className="text-2xl font-bold mb-8">Stuffix ERP</h1>
-        <nav>
-          {menuItems.map((item) => (
-            <Link
-              key={item.path}
-              href={item.path}
-              className="flex items-center space-x-2 p-2 hover:bg-gray-700 rounded-lg mb-2"
-            >
-              <span>{item.icon}</span>
-              <span>{item.name}</span>
-            </Link>
-          ))}
-        </nav>
-      </div>
-    </div>
-  );
-};
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setError(null);
+    setLoading(true);
 
-const Header = () => {
-  return (
-    <header className="bg-white shadow-md fixed top-0 left-64 right-0 h-16 flex items-center justify-between px-6">
-      <div className="flex items-center space-x-4">
-        <h2 className="text-xl font-semibold">Дашборд</h2>
-      </div>
-      <div className="flex items-center space-x-4">
-        <button className="p-2 hover:bg-gray-100 rounded-full">🔔</button>
-        <button className="p-2 hover:bg-gray-100 rounded-full">👤</button>
-      </div>
-    </header>
-  );
-};
+    const formData = new FormData(event.currentTarget);
+    const data = {
+      email: formData.get('email'),
+      password: formData.get('password'),
+    };
 
-const DashboardCard = ({ title, value, icon, color }: { title: string; value: string; icon: string; color: string }) => {
-  return (
-    <div className={`bg-white rounded-lg shadow-md p-6 ${color}`}>
-      <div className="flex items-center justify-between">
-        <div>
-          <h3 className="text-gray-500 text-sm">{title}</h3>
-          <p className="text-2xl font-semibold mt-1">{value}</p>
-        </div>
-        <div className="text-3xl">{icon}</div>
-      </div>
-    </div>
-  );
-};
+    try {
+      const result = await signIn('credentials', {
+        redirect: false,
+        email: data.email,
+        password: data.password,
+      });
 
-export default function Dashboard() {
-  const [currentDate] = useState(new Date().toLocaleDateString('ru-RU'));
+      if (result?.error) {
+        throw new Error(result.error);
+      }
 
-  const metrics = [
-    { title: 'Активные проекты', value: '12', change: '+2' },
-    { title: 'Сотрудники', value: '48', change: '+5' },
-    { title: 'Задачи на сегодня', value: '23', change: '-3' },
-    { title: 'Выполнено в этом месяце', value: '156', change: '+12' },
-  ];
-
-  const recentActivities = [
-    { text: 'Новый проект создан: "Разработка CRM"', time: '2 часа назад' },
-    { text: 'Задача завершена: "Дизайн главной страницы"', time: '4 часа назад' },
-    { text: 'Добавлен новый сотрудник: Иван Петров', time: '6 часов назад' },
-  ];
-
-  const upcomingEvents = [
-    { title: 'Встреча команды', date: '15:00 сегодня' },
-    { title: 'Дедлайн проекта UI/UX', date: 'Завтра' },
-    { title: 'Ревью кода', date: '16 марта' },
-  ];
+      router.push('/dashboard');
+      router.refresh();
+    } catch (error) {
+      console.error('Login error:', error);
+      setError(error instanceof Error ? error.message : 'Произошла ошибка при входе');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <Sidebar />
-      <Header />
-      
-      <main className="ml-64 pt-16 p-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Дашборд</h1>
-          <p className="text-gray-600">{currentDate}</p>
-        </div>
+    <Container component="main" maxWidth="xs" sx={{ 
+      minHeight: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: 'linear-gradient(45deg, #1a237e 30%, #0d47a1 90%)'
+    }}>
+      <Paper elevation={6} sx={{ 
+        p: 4,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        backgroundColor: 'rgba(255, 255, 255, 0.95)'
+      }}>
+        <Typography component="h1" variant="h4" gutterBottom sx={{ color: '#1a237e' }}>
+          Stuffix ERP
+        </Typography>
+        <Typography variant="h6" gutterBottom sx={{ color: '#424242' }}>
+          Вход в систему
+        </Typography>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {metrics.map((metric, index) => (
-            <div key={index} className="bg-white p-6 rounded-lg shadow-md">
-              <h3 className="text-gray-600 mb-2">{metric.title}</h3>
-              <div className="flex items-center justify-between">
-                <span className="text-2xl font-bold">{metric.value}</span>
-                <span className={`text-sm ${metric.change.startsWith('+') ? 'text-green-500' : 'text-red-500'}`}>
-                  {metric.change}
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
+        {error && (
+          <Alert severity="error" sx={{ width: '100%', mb: 2 }}>
+            {error}
+          </Alert>
+        )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h2 className="text-xl font-bold mb-4">Последние активности</h2>
-            <div className="space-y-4">
-              {recentActivities.map((activity, index) => (
-                <div key={index} className="flex justify-between items-center">
-                  <p>{activity.text}</p>
-                  <span className="text-sm text-gray-500">{activity.time}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h2 className="text-xl font-bold mb-4">Предстоящие события</h2>
-            <div className="space-y-4">
-              {upcomingEvents.map((event, index) => (
-                <div key={index} className="flex justify-between items-center">
-                  <p>{event.title}</p>
-                  <span className="text-sm text-gray-500">{event.date}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </main>
-    </div>
+        <Box component="form" onSubmit={handleSubmit} sx={{ width: '100%', mt: 1 }}>
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="email"
+            label="Email"
+            name="email"
+            autoComplete="email"
+            autoFocus
+            sx={{ '& .MuiOutlinedInput-root': { '&.Mui-focused fieldset': { borderColor: '#1a237e' } } }}
+          />
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            name="password"
+            label="Пароль"
+            type="password"
+            id="password"
+            autoComplete="current-password"
+            sx={{ '& .MuiOutlinedInput-root': { '&.Mui-focused fieldset': { borderColor: '#1a237e' } } }}
+          />
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ 
+              mt: 3, 
+              mb: 2,
+              backgroundColor: '#1a237e',
+              '&:hover': {
+                backgroundColor: '#0d47a1',
+              }
+            }}
+            disabled={loading}
+          >
+            {loading ? 'Вход...' : 'Войти'}
+          </Button>
+        </Box>
+      </Paper>
+    </Container>
   );
 }
