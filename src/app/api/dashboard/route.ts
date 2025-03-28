@@ -28,15 +28,15 @@ export async function GET() {
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-    const activityLogs = await prisma.activityLog.groupBy({
-      by: ['type'],
+    const activityLogs = await prisma.activityLog.findMany({
       where: {
         createdAt: {
           gte: sevenDaysAgo
         }
       },
-      _count: {
-        _all: true
+      select: {
+        type: true,
+        createdAt: true
       }
     });
 
@@ -48,9 +48,9 @@ export async function GET() {
 
       return {
         date: dateStr,
-        visits: activityLogs.find(log => log.type === 'visit')?._count._all ?? 0,
-        messages: activityLogs.find(log => log.type === 'message')?._count._all ?? 0,
-        tasks: activityLogs.find(log => log.type === 'task')?._count._all ?? 0
+        visits: activityLogs.filter(log => log.type === 'visit').length,
+        messages: activityLogs.filter(log => log.type === 'message').length,
+        tasks: activityLogs.filter(log => log.type === 'task').length
       };
     }).reverse();
 
