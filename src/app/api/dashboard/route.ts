@@ -16,7 +16,7 @@ export async function GET() {
   try {
     const session = await getServerSession(authOptions);
     
-    if (!session) {
+    if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -55,11 +55,16 @@ export async function GET() {
       date.setDate(date.getDate() - index);
       const dateStr = date.toISOString().split('T')[0];
 
+      const dayLogs = activityLogs.filter((log: ActivityLog) => {
+        const logDate = new Date(log.createdAt);
+        return logDate.toISOString().split('T')[0] === dateStr;
+      });
+
       return {
         date: dateStr,
-        visits: activityLogs.filter((log: ActivityLog) => log.type === 'visit').length,
-        messages: activityLogs.filter((log: ActivityLog) => log.type === 'message').length,
-        tasks: activityLogs.filter((log: ActivityLog) => log.type === 'task').length
+        visits: dayLogs.filter(log => log.type === 'visit').length,
+        messages: dayLogs.filter(log => log.type === 'message').length,
+        tasks: dayLogs.filter(log => log.type === 'task').length
       };
     }).reverse();
 
