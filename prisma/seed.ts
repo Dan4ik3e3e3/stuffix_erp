@@ -33,6 +33,7 @@ async function main() {
           name: `Project ${i + 1}`,
           description: `Description for project ${i + 1}`,
           status: ['active', 'completed', 'pending'][i],
+          clientId: clients[i % clients.length].id,
         },
       })
     )
@@ -60,6 +61,7 @@ async function main() {
           description: `Description for task ${i + 1}`,
           status: ['todo', 'in_progress', 'done'][i % 3],
           assignedTo: user.id,
+          projectId: projects[i % projects.length].id,
         },
       })
     )
