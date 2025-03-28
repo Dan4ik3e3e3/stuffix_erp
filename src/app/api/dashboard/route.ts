@@ -2,11 +2,9 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
+import { Prisma } from '@prisma/client';
 
-interface ActivityLog {
-  type: string;
-  _count: number;
-}
+type ActivityLogGroupByResult = Prisma.PromiseReturnType<typeof prisma.activityLog.groupBy>;
 
 export async function GET() {
   try {
