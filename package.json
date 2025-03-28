@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build --no-lint",
+    "build": "prisma generate && next build --no-lint",
     "start": "next start",
     "lint": "next lint",
     "create-admin": "ts-node src/scripts/createAdmin.ts",
@@ -49,6 +49,6 @@
     "@typescript-eslint/parser": "^8.28.0",
     "eslint": "^8.57.0",
     "eslint-config-next": "^14.1.0",
-    "prisma": "^6.5.0"
+    "prisma": "^5.10.2"
   }
 }
