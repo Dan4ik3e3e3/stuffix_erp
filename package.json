@@ -4,12 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && next build --no-lint",
+    "build": "npx prisma generate && next build --no-lint",
     "start": "next start",
     "lint": "next lint",
     "create-admin": "ts-node src/scripts/createAdmin.ts",
     "seed": "ts-node prisma/seed.ts",
-    "prisma:generate": "prisma generate"
+    "prisma:generate": "npx prisma generate"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
