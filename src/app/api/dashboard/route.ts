@@ -3,6 +3,11 @@ import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 
+type ActivityLog = {
+  type: string;
+  createdAt: Date;
+};
+
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
@@ -38,7 +43,7 @@ export async function GET() {
         type: true,
         createdAt: true
       }
-    });
+    }) as ActivityLog[];
 
     // Преобразуем данные в нужный формат
     const activityData = Array.from({ length: 7 }).map((_, index) => {
@@ -48,9 +53,9 @@ export async function GET() {
 
       return {
         date: dateStr,
-        visits: activityLogs.filter(log => log.type === 'visit').length,
-        messages: activityLogs.filter(log => log.type === 'message').length,
-        tasks: activityLogs.filter(log => log.type === 'task').length
+        visits: activityLogs.filter((log: ActivityLog) => log.type === 'visit').length,
+        messages: activityLogs.filter((log: ActivityLog) => log.type === 'message').length,
+        tasks: activityLogs.filter((log: ActivityLog) => log.type === 'task').length
       };
     }).reverse();
 
