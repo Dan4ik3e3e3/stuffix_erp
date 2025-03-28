@@ -2,9 +2,6 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
-import { Prisma } from '@prisma/client';
-
-type ActivityLogGroupByResult = Prisma.PromiseReturnType<typeof prisma.activityLog.groupBy>;
 
 export async function GET() {
   try {
@@ -38,7 +35,9 @@ export async function GET() {
           gte: sevenDaysAgo
         }
       },
-      _count: true
+      _count: {
+        _all: true
+      }
     });
 
     // Преобразуем данные в нужный формат
@@ -49,9 +48,9 @@ export async function GET() {
 
       return {
         date: dateStr,
-        visits: activityLogs.find(log => log.type === 'visit')?._count ?? 0,
-        messages: activityLogs.find(log => log.type === 'message')?._count ?? 0,
-        tasks: activityLogs.find(log => log.type === 'task')?._count ?? 0
+        visits: activityLogs.find(log => log.type === 'visit')?._count._all ?? 0,
+        messages: activityLogs.find(log => log.type === 'message')?._count._all ?? 0,
+        tasks: activityLogs.find(log => log.type === 'task')?._count._all ?? 0
       };
     }).reverse();
 
