@@ -29,8 +29,19 @@ export async function GET() {
     ] = await Promise.all([
       prisma.client.count(),
       prisma.project.count(),
-      prisma.message.count(),
-      prisma.task.count()
+      prisma.message.count({
+        where: {
+          OR: [
+            { fromId: session.user.id },
+            { toId: session.user.id }
+          ]
+        }
+      }),
+      prisma.task.count({
+        where: {
+          assignedTo: session.user.id
+        }
+      })
     ]);
 
     // Получаем данные активности за последние 7 дней
@@ -39,6 +50,7 @@ export async function GET() {
 
     const activityLogs = await prisma.activityLog.findMany({
       where: {
+        userId: session.user.id,
         createdAt: {
           gte: sevenDaysAgo
         }
