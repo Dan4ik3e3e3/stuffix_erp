@@ -8,6 +8,10 @@ type ActivityLog = {
   createdAt: Date;
 };
 
+// Указываем, что этот маршрут динамический
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
